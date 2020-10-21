@@ -49,9 +49,10 @@ public:
         if(res < 0) throw std::runtime_error("Cannot write on socket");
         return res;
     }
+
     void connect(struct sockaddr_in *addr, unsigned int len){
         if(::connect(sockFd, reinterpret_cast<struct sockaddr*>(addr), len) != 0)
-            throw new std::runtime_error("Cannot connect to remote socket");
+            throw std::runtime_error("Cannot connect to remote socket");
     }
 };
 

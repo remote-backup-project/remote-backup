@@ -11,6 +11,7 @@
 #include <cstring>
 #include <netinet/in.h>
 #include <zconf.h>
+#include <arpa/inet.h>
 #include "socket.h"
 
 class ServerSocket : private Socket{
@@ -21,9 +22,18 @@ public:
         sockAddrIn.sin_port = htons(portNumber);
         sockAddrIn.sin_addr.s_addr = htonl(INADDR_ANY);
         if(::bind(sockFd, reinterpret_cast<struct sockaddr*>(&sockAddrIn), sizeof(sockAddrIn)) != 0)
-                throw std::runtime_error("Cannot bind port");
+            throw std::runtime_error("Cannot bind port");
         if(::listen(sockFd,8) != 0){
             throw std::runtime_error("Cannot listen port");
+        }
+        char name[16];
+        inet_ntop(AF_INET, &sockAddrIn.sin_addr, name, sizeof(name));
+        std::cout<<"Server socket opened on "<<name<<": "<<ntohs(sockAddrIn.sin_port)<<std::endl;
+    }
+    ~ServerSocket(){
+        if (sockFd != 0){
+            close(sockFd);
+            std::cout<<"Server socket "<<sockFd<<" closed"<<std::endl;
         }
     }
 
