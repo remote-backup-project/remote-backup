@@ -32,6 +32,7 @@ int main(int argc, char** argv) {
     if(argc != 2) return -1;
     int temp = atoi(argv[1]);
     if(temp == 0){
+        std::cout<<"SERVER FUNCTION"<<std::endl;
         serverFunction2();
     }
     else{
@@ -93,11 +94,15 @@ void clientFunction(){
 void serverFunction2(){
     io_service io_service;
 
-    tcp::socket server_socket(io_service); // Creating socket object
+    tcp::acceptor::endpoint_type end_type;
     tcp::acceptor acceptor_server(io_service,tcp::endpoint(tcp::v4(), 9999)); // Listening to incoming connection on port 9999
+    tcp::socket server_socket(io_service); // Creating socket object
 
-    acceptor_server.accept(server_socket); // Waiting for connection
     std::cout<<"Waiting for incoming connections..."<<std::endl;
+    acceptor_server.accept(server_socket, end_type); // Waiting for connection
+    std::string sClientIp = end_type.address().to_string();
+    unsigned short uiClientPort = end_type.port();
+    std::cout<<sClientIp<<" connected on port: "<<uiClientPort<<std::endl;
 
     while (true) {
         std::string readString = getDataFromBuffer(server_socket);
@@ -124,7 +129,7 @@ void clientFunction2(){
 
     while (true) {
         std::cout << "Enter message: ";
-        std::string message, reply,;
+        std::string message, reply;
         getline(std::cin, message);
         sendDataToBuffer(client_socket, message);
 
