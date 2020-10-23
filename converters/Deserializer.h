@@ -13,6 +13,10 @@
 class Deserializer {
 public:
 
+    /**
+     * Deserialize custom ->
+     *  prevede che il tipo T abbia un metodo readAsString(boost::property_tree::ptree)
+     */
     template <typename T>
     static T deserialize(std::vector<char>& v){
         boost::property_tree::ptree pt;

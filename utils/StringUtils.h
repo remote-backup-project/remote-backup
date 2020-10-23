@@ -2,26 +2,18 @@
 // Created by alessandro on 22/10/20.
 //
 
-#ifndef REMOTE_BACKUP_UTILS_H
-#define REMOTE_BACKUP_UTILS_H
+#ifndef REMOTE_BACKUP_STRINGUTILS_H
+#define REMOTE_BACKUP_STRINGUTILS_H
 
 #include <iostream>
 #include <vector>
 #include <string>
 #include <regex>
+#include <search.h>
+#include <boost/algorithm/string.hpp>
 
-class Utils{
+class StringUtils{
 public:
-    static std::vector<std::string> split(const std::string& s, char delimiter)
-    {
-        std::vector<std::string> tokens;
-        std::string token;
-        std::istringstream tokenStream(s);
-        while (std::getline(tokenStream, token, delimiter)){
-            tokens.push_back(token);
-        }
-        return tokens;
-    }
 
     static std::string encodeBase64(const std::string& data) {
         static constexpr char sEncodingTable[] = {
@@ -110,6 +102,21 @@ public:
 
         return "";
     }
+
+    static std::string getStringDifference(const std::string& s1, const std::string& s2){
+        for(long unsigned int i = 0; i < s1.size(); i++){
+            if(s2.size() > i && s1[i] == s2[i])
+                continue;
+            else return s1.substr(i, s1.size()-1);
+        }
+        return "";
+    }
+
+    static std::vector<std::string> split(const std::string& s, const std::string& delimitator){
+        std::vector<std::string> results;
+        boost::split(results, s, boost::is_any_of("/"));
+        return results;
+    }
 };
 
-#endif //REMOTE_BACKUP_UTILS_H
+#endif //REMOTE_BACKUP_STRINGUTILS_H

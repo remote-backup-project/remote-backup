@@ -13,6 +13,10 @@
 class Serializer {
 public:
 
+    /**
+     * Serialize custom ->
+     *  prevede che il tipo T abbia un metodo writeAsString(boost::property_tree::ptree)
+     */
     template <typename T>
     static std::vector<char> serialize(T obj){
         boost::property_tree::ptree pt;

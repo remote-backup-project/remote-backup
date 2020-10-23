@@ -2,126 +2,100 @@
 #include <filesystem>
 #include <vector>
 #include <string>
-#include <csignal>
-#include "converters/Serializer.h"
-#include "converters/Deserializer.h"
 #include "utils/Constants.h"
-#include "FileInfo.h"
-#include <sys/stat.h>
+#include "models/FileInfo.h"
+#include "communication/Pipe.h"
 
 namespace fs = std::filesystem;
 
-template <typename T>
-T read_pipe(int fd){
-    ushort size = 0;
-    read(fd, &size, sizeof(ushort));
-    std::vector<char> buff(size);
-    read(fd, reinterpret_cast<char*>(buff.data()), size);
-    return Deserializer::deserialize<T>(buff);
-}
-
-template <typename T>
-void write_pipe(int fd, T obj){
-    auto buff = Serializer::serialize<T>(obj);
-    ushort size = buff.size();
-    write(fd, &size, sizeof(ushort));
-    write(fd, reinterpret_cast<char*>(buff.data()), size);
-}
-
-pid_t openConnection(int* channel){
-    if (pipe(channel) == -1){
-        std::cout<<"Errore nella pipe per il channel"<<std::endl;
-    }
-
-    pid_t pid = fork();
-    if (pid == Constants::Pipe::FORK_ERROR) {
-        std::cout << "Errore nella fork" << std::endl;
-    }
-
-    return pid;
-}
-
-void sendFile(const std::string& filename, int channel)
+void sendFile(const std::string& basePath, const std::string& filePath, Pipe& pipe)
 {
     std::string v2;
     std::ifstream ifs;
-    ifs.open(filename, std::ios::in | std::ios::binary);
+    ifs.open(filePath, std::ios::in | std::ios::binary);
 
     if(!ifs.is_open())
-        throw std::exception();
+        throw std::exception(); // TODO da rivedere se lanciare eccezione, altro o eccezione custom
 
     std::vector<char> data(Constants::Pipe::MAX_BYTE + 1,0);
-    int i = 0;
     while (true)
     {
-        i++;
         ifs.read(data.data(), Constants::Pipe::MAX_BYTE);
         std::streamsize s = ((ifs)? Constants::Pipe::MAX_BYTE : ifs.gcount());
         data[s] = 0;
-        FileInfo fileInfo(std::string(data.data(), s), filename);
-        write_pipe(channel, fileInfo);
+        FileInfo fileInfo(std::string(data.data(), s), filePath, StringUtils::getStringDifference(filePath, basePath));
+        pipe.write_pipe(fileInfo); // TODO sostituire con socket
+
         if(!ifs)
             break;
     }
     ifs.close();
 }
 
-void finishSending(int channel){
-    write_pipe(channel, FileInfo());
+void finishSending(Pipe& pipe){
+    pipe.write_pipe(FileInfo()); //TODO sostituire con socket
 }
 
-void sendDirectory(const std::string& directory, int channel){
+void createRemoteDirectory(const std::string& basePath, const std::string& directoryPath, Pipe& pipe){
+    std::string relativePath = StringUtils::getStringDifference(directoryPath, basePath);
+    FileInfo fileInfo("", directoryPath, relativePath);
+    pipe.write_pipe(fileInfo); // TODO sostituire con socket
+}
+
+void sendDirectory(const std::string& directory, Pipe& pipe){
     fs::path path(directory);
     for(auto &p : fs::recursive_directory_iterator(path)){
-        std::cout << p.path().string() << std::endl;
+        std::cout << "sending = " + p.path().string() << std::endl;
         if( !fs::is_directory(p.status()) ){
-            sendFile(p.path().string(), channel);
-        }
+            sendFile(directory, p.path().string(), pipe);
+        }else createRemoteDirectory(directory, p.path().string(), pipe);
     }
-    finishSending(channel);
+    finishSending(pipe); // TODO forse non serve se facciamo canale di controllo
 }
 
-void receiveDirectory(const std::string& outputDir, int channel){
+void receiveDirectory(const std::string& outputDir, Pipe& pipe){
     std::ofstream ofs3;
     while(true){
-        auto fileInfo = read_pipe<FileInfo>(channel);
+        auto fileInfo = pipe.read_pipe<FileInfo>();
 
-        if(!fileInfo.isValid())
+        // serve per bloccare la lettura da pipe/socket
+        if(!fileInfo.isValid()) // TODO forse non serve se facciamo canale di controllo
             return;
 
-//        if(fileInfo.isDirectory()){
-//            const int dir_err = mkdir(std::string(outputDir + "/" + fileInfo.getFilename()).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-//            if (-1 == dir_err)
-//            {
-//                printf("Error creating directory!n");
-//                exit(1);
-//            }
-//        }
+        if(fileInfo.isDirectory()){
+            fs::path path(outputDir + fileInfo.getRelativePath());
 
-        if(!ofs3.is_open()){
-            ofs3 = std::ofstream(outputDir + "/" + fileInfo.getFilename(), std::ios::out | std::ios::binary);
-            if(!ofs3.is_open()) throw std::exception();
+            if(!fs::exists(path))
+                fs::create_directory(path);
+        }else{
+            if(!ofs3.is_open()){
+                ofs3 = std::ofstream(outputDir + fileInfo.getRelativePath(), std::ios::out | std::ios::binary);
+                if(!ofs3.is_open()) throw std::exception(); // TODO da rivedere se lanciare eccezione, altro o eccezione custom
+            }
+
+            ofs3.write(fileInfo.getContent().data(), fileInfo.getContent().size()*sizeof(char));
+            if(fileInfo.getContent().size() < Constants::Pipe::MAX_BYTE)
+                ofs3.close();
         }
-
-        ofs3.write(fileInfo.getContent().data(), fileInfo.getContent().size()*sizeof(char));
-        if(fileInfo.getContent().size() < Constants::Pipe::MAX_BYTE)
-            ofs3.close();
     }
 }
 
 int main() {
-    int channel[2];
+    Pipe pipe{};
+    std::string inputDirectory("/home/alessandro/CLionProjects/remote-backup/inputDirectory");
+    std::string outputDirectory("/home/alessandro/CLionProjects/remote-backup/outputDirectory");
 
-    pid_t pid = openConnection(channel);
+    if(pipe.openConnection().hasErrors())
+        return 1;
 
-    switch(pid){
+    switch(pipe.getPid()){
         case Constants::Pipe::CHILD:
-            close(channel[Constants::Pipe::READ]);
-            sendDirectory("/home/alessandro/CLionProjects/remote-backup/inputDirectory", channel[Constants::Pipe::WRITE]);
+            pipe.closeChildInRead();
+            sendDirectory(inputDirectory, pipe);
             exit(1);
         default:
-            close(channel[Constants::Pipe::WRITE]);
-            receiveDirectory("/home/alessandro/CLionProjects/remote-backup/outputDirectory", channel[Constants::Pipe::READ]);
+            pipe.closeParentInWrite();
+            receiveDirectory(outputDirectory, pipe);
     }
 
     return 0;
