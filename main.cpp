@@ -8,26 +8,38 @@
 #include "communication/Pipe.h"
 
 namespace fs = std::filesystem;
-using namespace boost::asio;
-using namespace boost::asio::ip;
+namespace asio = boost::asio;
 
-void serverFunction2();
-void clientFunction2();
+void startServer();
+void startClient();
 
-std::string getDataFromBuffer(tcp::socket& socket)
+template <typename T>
+T receive(asio::ip::tcp::socket& socket)
 {
-    streambuf buf;
-    read_until(socket, buf, "\n");
-    std::string data = buffer_cast<const char*>(buf.data());
-    return data;
+    ushort size = 0;
+    socket.receive(asio::buffer(&size, sizeof(ushort)));
+    size_t sizeRecv = 0;
+    std::vector<char> buff(size);
+    do{
+        sizeRecv += socket.receive(asio::buffer(reinterpret_cast<char*>(&buff[sizeRecv]), (size - sizeRecv) * sizeof(char)));
+    }while(sizeRecv < size);
+    return Deserializer::deserialize<T>(buff);
 }
-void sendDataToBuffer(tcp::socket& socket, const std::string& message)
+
+template <typename T>
+void send(asio::ip::tcp::socket& socket, T obj)
 {
-    write(socket,buffer(message + "\n\n"));
+    auto buff = Serializer::serialize<T>(obj);
+    ushort size = buff.size();
+    socket.send(asio::buffer(&size, sizeof(ushort)));
+    size_t sizeSent = 0;
+    do{
+        sizeSent += socket.send(asio::buffer(reinterpret_cast<char*>(&buff[sizeSent]), (size - sizeSent)*sizeof(char)));
+    }while(sizeSent < size);
 }
 
 
-void sendFile(const std::string& basePath, const std::string& filePath, Pipe& pipe)
+void sendFile(const std::string& basePath, const std::string& filePath, asio::ip::tcp::socket& socket)
 {
     std::string v2;
     std::ifstream ifs;
@@ -43,7 +55,7 @@ void sendFile(const std::string& basePath, const std::string& filePath, Pipe& pi
         std::streamsize s = ((ifs)? Constants::Pipe::MAX_BYTE : ifs.gcount());
         data[s] = 0;
         FileInfo fileInfo(std::string(data.data(), s), filePath, StringUtils::getStringDifference(filePath, basePath));
-        pipe.write_pipe(fileInfo); // TODO sostituire con socket
+        send(socket, fileInfo);
 
         if(!ifs)
             break;
@@ -51,31 +63,30 @@ void sendFile(const std::string& basePath, const std::string& filePath, Pipe& pi
     ifs.close();
 }
 
-void finishSending(Pipe& pipe){
-    pipe.write_pipe(FileInfo()); //TODO sostituire con socket
+void finishSending(asio::ip::tcp::socket& socket){
+    send(socket, FileInfo());
 }
 
-void createRemoteDirectory(const std::string& basePath, const std::string& directoryPath, Pipe& pipe){
+void createRemoteDirectory(const std::string& basePath, const std::string& directoryPath, asio::ip::tcp::socket& socket){
     std::string relativePath = StringUtils::getStringDifference(directoryPath, basePath);
     FileInfo fileInfo("", directoryPath, relativePath);
-    pipe.write_pipe(fileInfo); // TODO sostituire con socket
+    send(socket, fileInfo);
 }
 
-void sendDirectory(const std::string& directory, Pipe& pipe){
+void sendDirectory(const std::string& directory, asio::ip::tcp::socket& socket){
     fs::path path(directory);
     for(auto &p : fs::recursive_directory_iterator(path)){
-        std::cout << "sending = " + p.path().string() << std::endl;
         if( !fs::is_directory(p.status()) ){
-            sendFile(directory, p.path().string(), pipe);
-        }else createRemoteDirectory(directory, p.path().string(), pipe);
+            sendFile(directory, p.path().string(), socket);
+        }else createRemoteDirectory(directory, p.path().string(), socket);
     }
-    finishSending(pipe); // TODO forse non serve se facciamo canale di controllo
+    finishSending(socket);
 }
 
-void receiveDirectory(const std::string& outputDir, Pipe& pipe){
+void receiveDirectory(const std::string& outputDir, asio::ip::tcp::socket& socket){
     std::ofstream ofs3;
     while(true){
-        auto fileInfo = pipe.read_pipe<FileInfo>();
+        auto fileInfo = receive<FileInfo>(socket);
 
         // serve per bloccare la lettura da pipe/socket
         if(!fileInfo.isValid()) // TODO forse non serve se facciamo canale di controllo
@@ -99,33 +110,26 @@ void receiveDirectory(const std::string& outputDir, Pipe& pipe){
     }
 }
 
-int main() {
-    Pipe pipe{};
-    std::string inputDirectory("/home/alessandro/CLionProjects/remote-backup/inputDirectory");
-    std::string outputDirectory("/home/alessandro/CLionProjects/remote-backup/outputDirectory");
-
-    if(pipe.openConnection().hasErrors())
-        return 1;
-
-    switch(pipe.getPid()){
-        case Constants::Pipe::CHILD:
-            pipe.closeChildInRead();
-            sendDirectory(inputDirectory, pipe);
-            exit(1);
-        default:
-            pipe.closeParentInWrite();
-            receiveDirectory(outputDirectory, pipe);
+int main(int argc, char** argv) {
+    if(argc != 2) return -1;
+    int temp = atoi(argv[1]);
+    if(temp == 0){
+        std::cout<<"SERVER FUNCTION\n"<<std::endl;
+        startServer();
+    }else{
+        std::cout<<"CLIENT FUNCTION\n"<<std::endl;
+        startClient();
     }
-
     return 0;
 }
 
-void serverFunction2(){
-    io_service io_service;
+void startServer(){
+    std::string outputDirectory("/home/alessandro/CLionProjects/remote-backup/outputDirectory");
+    asio::io_service io_service;
 
-    tcp::acceptor::endpoint_type end_type;
-    tcp::acceptor acceptor_server(io_service,tcp::endpoint(tcp::v4(), 9999)); // Listening to incoming connection on port 9999
-    tcp::socket server_socket(io_service); // Creating socket object
+    asio::ip::tcp::acceptor::endpoint_type end_type;
+    asio::ip::tcp::acceptor acceptor_server(io_service,asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 9999)); // Listening to incoming connection on port 9999
+    asio::ip::tcp::socket server_socket(io_service); // Creating socket object
 
     std::cout<<"Waiting for incoming connections..."<<std::endl;
     acceptor_server.accept(server_socket, end_type); // Waiting for connection
@@ -133,42 +137,16 @@ void serverFunction2(){
     unsigned short uiClientPort = end_type.port();
     std::cout<<sClientIp<<" connected on port: "<<uiClientPort<<std::endl;
 
-    while (true) {
-        std::string readString = getDataFromBuffer(server_socket);
-        readString.pop_back();
-
-        std::string reply;
-        reply = "Reply to message: " + readString;
-        std::cout << "Server: " << reply << std::endl;
-        sendDataToBuffer(server_socket, reply);
-
-        // Validating if the connection has to be closed
-        if (readString == "stop_server") {
-            std::cout<<"Server stopped"<<std::endl;
-            break;
-        }
-    }
+    receiveDirectory(outputDirectory, server_socket);
 }
-void clientFunction2(){
-    io_service io_service;
+
+void startClient(){
+    std::string inputDirectory("/home/alessandro/CLionProjects/remote-backup/inputDirectory");
+    asio::io_service io_service;
     // socket creation
-    ip::tcp::socket client_socket(io_service);
+    asio::ip::tcp::socket client_socket(io_service);
 
-    client_socket.connect(tcp::endpoint(address::from_string("0.0.0.0"),9999));
+    client_socket.connect(asio::ip::tcp::endpoint(asio::ip::address::from_string("0.0.0.0"),9999));
 
-    while (true) {
-        std::cout << "Enter message: ";
-        std::string message, reply;
-        getline(std::cin, message);
-        sendDataToBuffer(client_socket, message);
-
-        reply = getDataFromBuffer(client_socket);
-        reply.pop_back(); // Popping last character "\n"
-        // Validating if the connection has to be closed
-        if (message == "stop_client") {
-            std::cout << "Connection terminated" << std::endl;
-            break;
-        }
-        std::cout << "Server: " << reply << std::endl;
-    }
+    sendDirectory(inputDirectory, client_socket);
 }
