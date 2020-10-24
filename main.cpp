@@ -93,11 +93,11 @@ void clientFunction(){
 }
 
 void serverFunction2(){
-    io_context io_context;
+    io_service io_service;
 
     tcp::acceptor::endpoint_type end_type;
-    tcp::acceptor acceptor_server(io_context,tcp::endpoint(tcp::v4(), 9999)); // Listening to incoming connection on port 9999
-    tcp::socket server_socket(io_context); // Creating socket object
+    tcp::acceptor acceptor_server(io_service,tcp::endpoint(tcp::v4(), 9999)); // Listening to incoming connection on port 9999
+    tcp::socket server_socket(io_service); // Creating socket object
 
     std::cout<<"Waiting for incoming connections..."<<std::endl;
     acceptor_server.accept(server_socket, end_type); // Waiting for connection
@@ -122,11 +122,11 @@ void serverFunction2(){
     }
 }
 void clientFunction2(){
-    io_context io_context;
+    io_service io_service;
     // socket creation
-    ip::tcp::socket client_socket(io_context);
+    ip::tcp::socket client_socket(io_service);
 
-    client_socket.connect(tcp::endpoint(address::from_string("127.0.0.1"),9999));
+    client_socket.connect(tcp::endpoint(address::from_string("0.0.0.0"),9999));
 
     while (true) {
         std::cout << "Enter message: ";
