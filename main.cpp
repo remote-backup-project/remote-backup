@@ -1,5 +1,6 @@
 #include <iostream>
 #include <filesystem>
+#include <boost/asio.hpp>
 #include <vector>
 #include <string>
 #include "utils/Constants.h"
@@ -7,6 +8,24 @@
 #include "communication/Pipe.h"
 
 namespace fs = std::filesystem;
+using namespace boost::asio;
+using namespace boost::asio::ip;
+
+void serverFunction2();
+void clientFunction2();
+
+std::string getDataFromBuffer(tcp::socket& socket)
+{
+    streambuf buf;
+    read_until(socket, buf, "\n");
+    std::string data = buffer_cast<const char*>(buf.data());
+    return data;
+}
+void sendDataToBuffer(tcp::socket& socket, const std::string& message)
+{
+    write(socket,buffer(message + "\n\n"));
+}
+
 
 void sendFile(const std::string& basePath, const std::string& filePath, Pipe& pipe)
 {
@@ -99,4 +118,57 @@ int main() {
     }
 
     return 0;
+}
+
+void serverFunction2(){
+    io_service io_service;
+
+    tcp::acceptor::endpoint_type end_type;
+    tcp::acceptor acceptor_server(io_service,tcp::endpoint(tcp::v4(), 9999)); // Listening to incoming connection on port 9999
+    tcp::socket server_socket(io_service); // Creating socket object
+
+    std::cout<<"Waiting for incoming connections..."<<std::endl;
+    acceptor_server.accept(server_socket, end_type); // Waiting for connection
+    std::string sClientIp = end_type.address().to_string();
+    unsigned short uiClientPort = end_type.port();
+    std::cout<<sClientIp<<" connected on port: "<<uiClientPort<<std::endl;
+
+    while (true) {
+        std::string readString = getDataFromBuffer(server_socket);
+        readString.pop_back();
+
+        std::string reply;
+        reply = "Reply to message: " + readString;
+        std::cout << "Server: " << reply << std::endl;
+        sendDataToBuffer(server_socket, reply);
+
+        // Validating if the connection has to be closed
+        if (readString == "stop_server") {
+            std::cout<<"Server stopped"<<std::endl;
+            break;
+        }
+    }
+}
+void clientFunction2(){
+    io_service io_service;
+    // socket creation
+    ip::tcp::socket client_socket(io_service);
+
+    client_socket.connect(tcp::endpoint(address::from_string("0.0.0.0"),9999));
+
+    while (true) {
+        std::cout << "Enter message: ";
+        std::string message, reply;
+        getline(std::cin, message);
+        sendDataToBuffer(client_socket, message);
+
+        reply = getDataFromBuffer(client_socket);
+        reply.pop_back(); // Popping last character "\n"
+        // Validating if the connection has to be closed
+        if (message == "stop_client") {
+            std::cout << "Connection terminated" << std::endl;
+            break;
+        }
+        std::cout << "Server: " << reply << std::endl;
+    }
 }
