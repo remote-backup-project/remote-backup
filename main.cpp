@@ -23,7 +23,7 @@ std::string getDataFromBuffer(tcp::socket& socket)
 }
 void sendDataToBuffer(tcp::socket& socket, const std::string& message)
 {
-    write(socket,buffer(message + "\n"));
+    write(socket,buffer(message + "\n\n"));
 }
 
 namespace fs = std::filesystem;
@@ -32,10 +32,11 @@ int main(int argc, char** argv) {
     if(argc != 2) return -1;
     int temp = atoi(argv[1]);
     if(temp == 0){
-        std::cout<<"SERVER FUNCTION"<<std::endl;
+        std::cout<<"SERVER FUNCTION\n"<<std::endl;
         serverFunction2();
     }
     else{
+        std::cout<<"CLIENT FUNCTION\n"<<std::endl;
         clientFunction2();
     }
     return 0;
@@ -92,11 +93,11 @@ void clientFunction(){
 }
 
 void serverFunction2(){
-    io_service io_service;
+    io_context io_context;
 
     tcp::acceptor::endpoint_type end_type;
-    tcp::acceptor acceptor_server(io_service,tcp::endpoint(tcp::v4(), 9999)); // Listening to incoming connection on port 9999
-    tcp::socket server_socket(io_service); // Creating socket object
+    tcp::acceptor acceptor_server(io_context,tcp::endpoint(tcp::v4(), 9999)); // Listening to incoming connection on port 9999
+    tcp::socket server_socket(io_context); // Creating socket object
 
     std::cout<<"Waiting for incoming connections..."<<std::endl;
     acceptor_server.accept(server_socket, end_type); // Waiting for connection
@@ -121,9 +122,9 @@ void serverFunction2(){
     }
 }
 void clientFunction2(){
-    io_service io_service;
+    io_context io_context;
     // socket creation
-    ip::tcp::socket client_socket(io_service);
+    ip::tcp::socket client_socket(io_context);
 
     client_socket.connect(tcp::endpoint(address::from_string("127.0.0.1"),9999));
 
