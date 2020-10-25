@@ -15,33 +15,26 @@
 #include "socket.h"
 
 class ServerSocket : private Socket{
+//    asio::ip::tcp::acceptor* acceptor_server;
+    asio::ip::tcp::acceptor::endpoint_type end_type;
 public:
-    ServerSocket(uint16_t portNumber) {
-        struct sockaddr_in sockAddrIn;
-        sockAddrIn.sin_family = AF_INET;
-        sockAddrIn.sin_port = htons(portNumber);
-        sockAddrIn.sin_addr.s_addr = htonl(INADDR_ANY);
-        if(::bind(sockFd, reinterpret_cast<struct sockaddr*>(&sockAddrIn), sizeof(sockAddrIn)) != 0)
-            throw std::runtime_error("Cannot bind port");
-        if(::listen(sockFd,8) != 0){
-            throw std::runtime_error("Cannot listen port");
-        }
-        char name[16];
-        inet_ntop(AF_INET, &sockAddrIn.sin_addr, name, sizeof(name));
-        std::cout<<"Server socket opened on "<<name<<": "<<ntohs(sockAddrIn.sin_port)<<std::endl;
+    ServerSocket(){
+        std::cout<<"Server socket opened on "<< socket.local_endpoint().address().to_string()
+            <<": "<< socket.local_endpoint().port() <<std::endl;
     }
     ~ServerSocket(){
-        if (sockFd != 0){
-            close(sockFd);
-            std::cout<<"Server socket "<<sockFd<<" closed"<<std::endl;
-        }
+        socket.close();
     }
 
-    Socket accept(struct sockaddr_in* addr, unsigned int* len) {
-        int fd = ::accept(sockFd, reinterpret_cast<struct sockaddr*>(&addr), len);
-        if(fd < 0) throw std::runtime_error("Cannot accept socket");
-        return Socket(fd);
-    }
+//    void accept(int port) {
+//        acceptor_server = asio::ip::tcp::acceptor(io_service,
+//            asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port));
+//        std::cout<<"Waiting for incoming connections..."<<std::endl;
+//        acceptor_server.accept(socket, end_type); // Waiting for connection
+//        std::string sClientIp = end_type.address().to_string();
+//        unsigned short uiClientPort = end_type.port();
+//        std::cout<<sClientIp<<" connected on port: "<<uiClientPort<<std::endl;
+//    }
 };
 
 

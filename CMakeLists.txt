@@ -12,4 +12,3 @@ link_directories(${Boost_LIBRARY_DIR})
 add_executable(remote_backup main.cpp socket.cpp socket.h serverSocket.cpp serverSocket.h)
 
 TARGET_LINK_LIBRARIES( remote_backup LINK_PUBLIC ${Boost_LIBRARIES} -lstdc++fs)
-
