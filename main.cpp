@@ -6,9 +6,12 @@
 #include "utils/Constants.h"
 #include "models/FileInfo.h"
 #include "communication/Pipe.h"
+#include "utils/Logger.h"
 
 namespace fs = std::filesystem;
 namespace asio = boost::asio;
+
+Logger LOG;
 
 void startServer();
 void startClient();
@@ -41,6 +44,7 @@ void send(asio::ip::tcp::socket& socket, T obj)
 
 void sendFile(const std::string& basePath, const std::string& filePath, asio::ip::tcp::socket& socket)
 {
+    LOG.info("sendFile - filePath = " + filePath);
     std::string v2;
     std::ifstream ifs;
     ifs.open(filePath, std::ios::in | std::ios::binary);
@@ -64,42 +68,51 @@ void sendFile(const std::string& basePath, const std::string& filePath, asio::ip
 }
 
 void finishSending(asio::ip::tcp::socket& socket){
+    LOG.info("finishSending");
     send(socket, FileInfo());
 }
 
 void createRemoteDirectory(const std::string& basePath, const std::string& directoryPath, asio::ip::tcp::socket& socket){
+    LOG.info("createRemoteDirectory - directory = " + directoryPath);
     std::string relativePath = StringUtils::getStringDifference(directoryPath, basePath);
     FileInfo fileInfo("", directoryPath, relativePath);
     send(socket, fileInfo);
 }
 
 void sendDirectory(const std::string& directory, asio::ip::tcp::socket& socket){
+    LOG.info("sendDirectory - directory = " + directory);
     fs::path path(directory);
     for(auto &p : fs::recursive_directory_iterator(path)){
-        if( !fs::is_directory(p.status()) ){
+        if( !fs::is_directory(p.status()) )
             sendFile(directory, p.path().string(), socket);
-        }else createRemoteDirectory(directory, p.path().string(), socket);
+        else createRemoteDirectory(directory, p.path().string(), socket);
     }
     finishSending(socket);
 }
 
 void receiveDirectory(const std::string& outputDir, asio::ip::tcp::socket& socket){
+    LOG.info("receiveDirectory - outputDir = " + outputDir);
     std::ofstream ofs3;
     while(true){
         auto fileInfo = receive<FileInfo>(socket);
 
         // serve per bloccare la lettura da pipe/socket
-        if(!fileInfo.isValid()) // TODO forse non serve se facciamo canale di controllo
+        if(!fileInfo.isValid()){
+            LOG.info("receiveDirectory - finish receiving");
             return;
+        } // TODO forse non serve se facciamo canale di controllo
 
         if(fileInfo.isDirectory()){
             fs::path path(outputDir + fileInfo.getRelativePath());
+            LOG.info("receiveDirectory - receiving directory in = " + path.string());
 
             if(!fs::exists(path))
                 fs::create_directory(path);
         }else{
             if(!ofs3.is_open()){
-                ofs3 = std::ofstream(outputDir + fileInfo.getRelativePath(), std::ios::out | std::ios::binary);
+                std::string path(outputDir + fileInfo.getRelativePath());
+                LOG.info("receiveDirectory - receiving file in = " + path);
+                ofs3 = std::ofstream(path, std::ios::out | std::ios::binary);
                 if(!ofs3.is_open()) throw std::exception(); // TODO da rivedere se lanciare eccezione, altro o eccezione custom
             }
 
@@ -114,16 +127,15 @@ int main(int argc, char** argv) {
     if(argc != 2) return -1;
     int temp = atoi(argv[1]);
     if(temp == 0){
-        std::cout<<"SERVER FUNCTION\n"<<std::endl;
         startServer();
     }else{
-        std::cout<<"CLIENT FUNCTION\n"<<std::endl;
         startClient();
     }
     return 0;
 }
 
 void startServer(){
+    LOG.info("startServer");
     std::string outputDirectory("/home/alessandro/CLionProjects/remote-backup/outputDirectory");
     asio::io_service io_service;
 
@@ -131,16 +143,17 @@ void startServer(){
     asio::ip::tcp::acceptor acceptor_server(io_service,asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 9999)); // Listening to incoming connection on port 9999
     asio::ip::tcp::socket server_socket(io_service); // Creating socket object
 
-    std::cout<<"Waiting for incoming connections..."<<std::endl;
+    LOG.info("startServer - Waiting for incoming connections...");
     acceptor_server.accept(server_socket, end_type); // Waiting for connection
     std::string sClientIp = end_type.address().to_string();
     unsigned short uiClientPort = end_type.port();
-    std::cout<<sClientIp<<" connected on port: "<<uiClientPort<<std::endl;
+    LOG.info("startServer - " + sClientIp + " connected on port " + std::to_string(uiClientPort));
 
     receiveDirectory(outputDirectory, server_socket);
 }
 
 void startClient(){
+    LOG.info("startClient");
     std::string inputDirectory("/home/alessandro/CLionProjects/remote-backup/inputDirectory");
     asio::io_service io_service;
     // socket creation
