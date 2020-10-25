@@ -15,6 +15,8 @@
 #include "./converters/Serializer.h"
 #include "utils/Constants.h"
 #include "models/FileInfo.h"
+#include "models/StringWrapper.h"
+#include <fstream>
 
 namespace fs = std::filesystem;
 namespace asio = boost::asio;
@@ -24,20 +26,26 @@ class Socket {
     asio::ip::tcp::socket socket;
     Socket(const Socket&) = delete;
     Socket& operator = (const Socket&) = delete;
-    Socket(asio::io_service& io_service) : socket(io_service) {}
-
+    Socket(asio::io_service& io_service) : socket(io_service) {
+        std::cout<<"Socket created - 1" <<std::endl;
+    }
     friend class ServerSocket;
+
 public:
     Socket() : socket(io_service){
-        std::cout<<"Socket opened on "<< socket.local_endpoint().address().to_string()
-                 <<": "<< socket.local_endpoint().port() <<std::endl;
+        std::cout<<"Socket created - 2" <<std::endl;
     }
     ~Socket() {
         socket.close();
     }
+    void connect(std::string ip_address, int port) {
+        socket.connect(asio::ip::tcp::endpoint(
+                asio::ip::address::from_string(ip_address),
+                port));
+    }
 
     template <typename T>
-    T receive()
+    T receiveData()
     {
         ushort size = 0;
         socket.receive(asio::buffer(&size, sizeof(ushort)));
@@ -50,7 +58,7 @@ public:
     }
 
     template <typename T>
-    void send(T obj)
+    void sendData(T obj)
     {
         auto buff = Serializer::serialize<T>(obj);
         ushort size = buff.size();
@@ -59,12 +67,6 @@ public:
         do{
             sizeSent += socket.send(asio::buffer(reinterpret_cast<char*>(&buff[sizeSent]), (size - sizeSent)*sizeof(char)));
         }while(sizeSent < size);
-    }
-
-    void connect(std::string ip_address, int port) {
-        socket.connect(asio::ip::tcp::endpoint(
-                asio::ip::address::from_string(ip_address),
-                port));
     }
 
     void sendFile(const std::string& basePath, const std::string& filePath)
@@ -83,7 +85,7 @@ public:
             std::streamsize s = ((ifs)? Constants::Pipe::MAX_BYTE : ifs.gcount());
             data[s] = 0;
             FileInfo fileInfo(std::string(data.data(), s), filePath, StringUtils::getStringDifference(filePath, basePath));
-            send(fileInfo);
+            sendData(fileInfo);
 
             if(!ifs)
                 break;
@@ -92,13 +94,13 @@ public:
     }
 
     void finishSending(){
-        send(FileInfo());
+        sendData(FileInfo());
     }
 
     void createRemoteDirectory(const std::string& basePath, const std::string& directoryPath, asio::ip::tcp::socket& socket){
         std::string relativePath = StringUtils::getStringDifference(directoryPath, basePath);
         FileInfo fileInfo("", directoryPath, relativePath);
-        send(fileInfo);
+        sendData(fileInfo);
     }
 
     void sendDirectory(const std::string& directory){
@@ -111,31 +113,25 @@ public:
         finishSending();
     }
 
-    void receiveDirectory(const std::string& outputDir){
-        std::ofstream ofs3;
-        while(true){
-            auto fileInfo = receive<FileInfo>();
+    void doLogin(){
+        std::fstream clientFile;
+        clientFile.open("/home/gaetano/CLionProjects/remote-backup/clientCredentials.txt");
+        if(!clientFile.is_open()) std::cout<<"error opening client credentials file"<<std::endl;
+        else {
+            std::string temp;
+            std::getline(clientFile, temp);
+            std::string userName(temp);
+            std::cout << "user: " << temp << std::endl;
 
-            // serve per bloccare la lettura da pipe/socket
-            if(!fileInfo.isValid()) // TODO forse non serve se facciamo canale di controllo
-                return;
+            std::getline(clientFile, temp);
+            std::string inputPath(temp);
+            std::cout << "path: " << temp << std::endl;
 
-            if(fileInfo.isDirectory()){
-                fs::path path(outputDir + fileInfo.getRelativePath());
-
-                if(!fs::exists(path))
-                    fs::create_directory(path);
-            }else{
-                if(!ofs3.is_open()){
-                    ofs3 = std::ofstream(outputDir + fileInfo.getRelativePath(), std::ios::out | std::ios::binary);
-                    if(!ofs3.is_open()) throw std::exception(); // TODO da rivedere se lanciare eccezione, altro o eccezione custom
-                }
-
-                ofs3.write(fileInfo.getContent().data(), fileInfo.getContent().size()*sizeof(char));
-                if(fileInfo.getContent().size() < Constants::Pipe::MAX_BYTE)
-                    ofs3.close();
-            }
+            StringWrapper sentItem(userName + "\n" + inputPath);
+            sendData(sentItem);
+            sendDirectory(inputPath);
         }
+        clientFile.close();
     }
 };
 
