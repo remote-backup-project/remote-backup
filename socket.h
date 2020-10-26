@@ -11,12 +11,13 @@
 #include <iostream>
 #include <boost/asio.hpp>
 #include <filesystem>
+#include <fstream>
 #include "./converters/Deserializer.h"
 #include "./converters/Serializer.h"
 #include "utils/Constants.h"
 #include "models/FileInfo.h"
 #include "models/StringWrapper.h"
-#include <fstream>
+#include "exceptions/FileException.h"
 
 namespace fs = std::filesystem;
 namespace asio = boost::asio;
@@ -39,58 +40,82 @@ public:
         socket.close();
     }
     void connect(std::string ip_address, int port) {
-        socket.connect(asio::ip::tcp::endpoint(
-                asio::ip::address::from_string(ip_address),
-                port));
+        try{
+            socket.connect(asio::ip::tcp::endpoint(
+                    asio::ip::address::from_string(ip_address),
+                    port));
+        }
+        catch(std::exception exception){
+            std::cout << exception.what() << std::endl;
+        }
     }
 
     template <typename T>
     T receiveData()
     {
-        ushort size = 0;
-        socket.receive(asio::buffer(&size, sizeof(ushort)));
-        size_t sizeRecv = 0;
-        std::vector<char> buff(size);
-        do{
-            sizeRecv += socket.receive(asio::buffer(reinterpret_cast<char*>(&buff[sizeRecv]), (size - sizeRecv) * sizeof(char)));
-        }while(sizeRecv < size);
-        return Deserializer::deserialize<T>(buff);
+        try{
+            ushort size = 0;
+            socket.receive(asio::buffer(&size, sizeof(ushort)));
+            size_t sizeRecv = 0;
+            std::vector<char> buff(size);
+            do{
+                sizeRecv += socket.receive(asio::buffer(reinterpret_cast<char*>(&buff[sizeRecv]), (size - sizeRecv) * sizeof(char)));
+            }while(sizeRecv < size);
+            return Deserializer::deserialize<T>(buff);
+        }
+        catch(std::exception exception){
+            std::cout << exception.what() << std::endl;
+        }
     }
 
     template <typename T>
     void sendData(T obj)
     {
-        auto buff = Serializer::serialize<T>(obj);
-        ushort size = buff.size();
-        socket.send(asio::buffer(&size, sizeof(ushort)));
-        size_t sizeSent = 0;
-        do{
-            sizeSent += socket.send(asio::buffer(reinterpret_cast<char*>(&buff[sizeSent]), (size - sizeSent)*sizeof(char)));
-        }while(sizeSent < size);
+        try{
+            auto buff = Serializer::serialize<T>(obj);
+            ushort size = buff.size();
+            socket.send(asio::buffer(&size, sizeof(ushort)));
+            size_t sizeSent = 0;
+            do{
+                sizeSent += socket.send(asio::buffer(reinterpret_cast<char*>(&buff[sizeSent]), (size - sizeSent)*sizeof(char)));
+            }while(sizeSent < size);
+        }
+        catch(std::exception exception){
+            std::cout << exception.what() << std::endl;
+        }
     }
 
     void sendFile(const std::string& basePath, const std::string& filePath)
     {
-        std::string v2;
-        std::ifstream ifs;
-        ifs.open(filePath, std::ios::in | std::ios::binary);
+        try{
+            std::string v2;
+            std::ifstream ifs;
+            ifs.open(filePath, std::ios::in | std::ios::binary);
 
-        if(!ifs.is_open())
-            throw std::exception(); // TODO da rivedere se lanciare eccezione, altro o eccezione custom
+            if(!ifs.is_open()){
+                throw FileException("Cannot open file");
+            }
 
-        std::vector<char> data(Constants::Pipe::MAX_BYTE + 1,0);
-        while (true)
-        {
-            ifs.read(data.data(), Constants::Pipe::MAX_BYTE);
-            std::streamsize s = ((ifs)? Constants::Pipe::MAX_BYTE : ifs.gcount());
-            data[s] = 0;
-            FileInfo fileInfo(std::string(data.data(), s), filePath, StringUtils::getStringDifference(filePath, basePath));
-            sendData(fileInfo);
+            std::vector<char> data(Constants::Pipe::MAX_BYTE + 1,0);
+            while (true)
+            {
+                ifs.read(data.data(), Constants::Pipe::MAX_BYTE);
+                std::streamsize s = ((ifs)? Constants::Pipe::MAX_BYTE : ifs.gcount());
+                data[s] = 0;
+                FileInfo fileInfo(std::string(data.data(), s), filePath, StringUtils::getStringDifference(filePath, basePath));
+                sendData(fileInfo);
 
-            if(!ifs)
-                break;
+                if(!ifs)
+                    break;
+            }
+            ifs.close();
         }
-        ifs.close();
+        catch (FileException& exception) {
+            std::cout << exception.getMessage() << std::endl;
+        }
+        catch(std::exception exception){
+            std::cout << exception.what() << std::endl;
+        }
     }
 
     void finishSending(){
@@ -114,24 +139,33 @@ public:
     }
 
     void doLogin(){
-        std::fstream clientFile;
-        clientFile.open("/home/gaetano/CLionProjects/remote-backup/clientCredentials.txt");
-        if(!clientFile.is_open()) std::cout<<"error opening client credentials file"<<std::endl;
-        else {
-            std::string temp;
-            std::getline(clientFile, temp);
-            std::string userName(temp);
-            std::cout << "user: " << temp << std::endl;
+        try{
+            std::fstream clientFile;
+            clientFile.open("/home/gaetano/CLionProjects/remote-backup/clientCredentials.txt");
+            if(!clientFile.is_open())
+                throw FileException("Error opening client credentials file");
+            else {
+                std::string temp;
+                std::getline(clientFile, temp);
+                std::string userName(temp);
+                std::cout << "user: " << temp << std::endl;
 
-            std::getline(clientFile, temp);
-            std::string inputPath(temp);
-            std::cout << "path: " << temp << std::endl;
+                std::getline(clientFile, temp);
+                std::string inputPath(temp);
+                std::cout << "path: " << temp << std::endl;
 
-            StringWrapper sentItem(userName + "\n" + inputPath);
-            sendData(sentItem);
-            sendDirectory(inputPath);
+                StringWrapper sentItem(userName + "\n" + inputPath);
+                sendData(sentItem);
+                sendDirectory(inputPath);
+            }
+            clientFile.close();
         }
-        clientFile.close();
+        catch(FileException exception){
+            std::cout << exception.getMessage() << std::endl;
+        }
+        catch(std::exception exception){
+            std::cout << exception.what() << std::endl;
+        }
     }
 };
 
