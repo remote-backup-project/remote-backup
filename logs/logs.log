@@ -1,57 +1,40 @@
-[2020-10-31 18:54:05.547235] [0x00007fb21aade740] [info] - startServer
-[2020-10-31 18:54:05.547450] [0x00007fb21aade740] [info] - ServerSocket.accept - port = 9563
-[2020-10-31 18:54:05.547503] [0x00007fb21aade740] [info] - ServerSocket.accept - Waiting for incoming connections on port = 9563
-[2020-10-31 19:00:22.293101] [0x00007fb21aade740] [info] - ServerSocket.accept - 192.168.1.3 connected on port: 9563
-[2020-10-31 19:00:22.294410] [0x00007fb21aade740] [info] - startServer - command = {"code":"10","message":"Starting sending files"}
-[2020-10-31 19:00:22.295039] [0x00007fb21aade740] [info] - ServerSocket.accept - port = 9563
-[2020-10-31 19:00:22.295048] [0x00007fb21aada700] [info] - ServerSocket.accept - port = 9999
-[2020-10-31 19:00:22.295274] [0x00007fb21aade740] [info] - ServerSocket.accept - Waiting for incoming connections on port = 9563
-[2020-10-31 19:00:22.295380] [0x00007fb21aada700] [info] - ServerSocket.accept - Waiting for incoming connections on port = 9999
-[2020-10-31 19:00:22.298656] [0x00007fb21aada700] [info] - ServerSocket.accept - 192.168.1.3 connected on port: 9999
-[2020-10-31 19:00:22.298851] [0x00007fb21aada700] [info] - ServerSocket.serverLoginCheck
-[2020-10-31 19:00:22.301197] [0x00007fb21aada700] [info] - ServerSocket.serverLoginCheck - User NOT found -> creation of user folder
-[2020-10-31 19:00:22.301725] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - outputDir = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory
-[2020-10-31 19:00:22.302249] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - directory = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/directory
-[2020-10-31 19:00:22.303116] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/directory/prova.html
-[2020-10-31 19:00:22.303868] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/directory/prova2.html
-[2020-10-31 19:00:22.305908] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/IDJEKRJBG.jpg
-[2020-10-31 19:00:22.642841] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/prova.html
-[2020-10-31 19:00:22.643446] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/Schermata da 2020-04-25 05-55-01.png
-[2020-10-31 19:00:22.851059] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/SelfEvaluation_ita.pdf
-[2020-10-31 19:00:23.230733] [0x00007fb21aade740] [info] - ServerSocket.accept - 192.168.1.3 connected on port: 9563
-[2020-10-31 19:00:23.233899] [0x00007fb21aade740] [info] - startServer - command = {"code":"10","message":"Starting sending files"}
-[2020-10-31 19:00:23.294946] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - finishReceiving
-[2020-10-31 19:00:23.295158] [0x00007fb21aada700] [info] - ServerSocket.accept - port = 9999
-[2020-10-31 19:00:23.295216] [0x00007fb21aade740] [info] - ServerSocket.accept - port = 9563
-[2020-10-31 19:00:23.295280] [0x00007fb21aada700] [info] - ServerSocket.accept - Waiting for incoming connections on port = 9999
-[2020-10-31 19:00:23.295334] [0x00007fb21aade740] [info] - ServerSocket.accept - Waiting for incoming connections on port = 9563
-[2020-10-31 19:00:23.299690] [0x00007fb21aada700] [info] - ServerSocket.accept - 192.168.1.3 connected on port: 9999
-[2020-10-31 19:00:23.299792] [0x00007fb21aada700] [info] - ServerSocket.serverLoginCheck
-[2020-10-31 19:00:23.302207] [0x00007fb21aada700] [info] - ServerSocket.serverLoginCheck - Found User and Path
-[2020-10-31 19:00:23.302263] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - outputDir = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory
-[2020-10-31 19:00:23.303186] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - directory = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/directory
-[2020-10-31 19:00:23.304298] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/directory/prova.html
-[2020-10-31 19:00:23.305332] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/directory/prova2.html
-[2020-10-31 19:00:23.307189] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/IDJEKRJBG.jpg
-[2020-10-31 19:00:23.649346] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/prova.html
-[2020-10-31 19:00:23.650108] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/Schermata da 2020-04-25 05-55-01.png
-[2020-10-31 19:00:23.863357] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/SelfEvaluation_ita.pdf
-[2020-10-31 19:00:24.268879] [0x00007fb21aade740] [info] - ServerSocket.accept - 192.168.1.3 connected on port: 9563
-[2020-10-31 19:00:24.273125] [0x00007fb21aade740] [info] - startServer - command = {"code":"10","message":"Starting sending files"}
-[2020-10-31 19:00:24.323589] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - finishReceiving
-[2020-10-31 19:00:24.323813] [0x00007fb21aada700] [info] - ServerSocket.accept - port = 9999
-[2020-10-31 19:00:24.323886] [0x00007fb21aada700] [info] - ServerSocket.accept - Waiting for incoming connections on port = 9999
-[2020-10-31 19:00:24.323897] [0x00007fb21aade740] [info] - ServerSocket.accept - port = 9563
-[2020-10-31 19:00:24.324015] [0x00007fb21aade740] [info] - ServerSocket.accept - Waiting for incoming connections on port = 9563
-[2020-10-31 19:00:24.328491] [0x00007fb21aada700] [info] - ServerSocket.accept - 192.168.1.3 connected on port: 9999
-[2020-10-31 19:00:24.328576] [0x00007fb21aada700] [info] - ServerSocket.serverLoginCheck
-[2020-10-31 19:00:24.331659] [0x00007fb21aada700] [info] - ServerSocket.serverLoginCheck - Found User and Path
-[2020-10-31 19:00:24.331733] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - outputDir = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory
-[2020-10-31 19:00:24.332969] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - directory = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/directory
-[2020-10-31 19:00:24.334015] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/directory/prova.html
-[2020-10-31 19:00:24.334999] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/directory/prova2.html
-[2020-10-31 19:00:24.337022] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/IDJEKRJBG.jpg
-[2020-10-31 19:00:24.690550] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/prova.html
-[2020-10-31 19:00:24.691250] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/Schermata da 2020-04-25 05-55-01.png
-[2020-10-31 19:00:24.904396] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - file = /home/gaetano/CLionProjects/remote-backup/outputDirectory/Gaetano__home_alessandro_CLionProjects_remote-backup_inputDirectory/SelfEvaluation_ita.pdf
-[2020-10-31 19:00:25.408525] [0x00007fb21aada700] [info] - ServerSocket.receiveDirectory - finishReceiving
+[2020-10-31 19:26:56.012863] [0x00007f415621f740] [info] - startClient
+[2020-10-31 19:26:56.014227] [0x00007f415621f740] [info] - Socket.connect - connecting to ip = 0.0.0.0, port = 9563
+[2020-10-31 19:26:56.492826] [0x00007f415621f740] [info] - startClient - command = {"code":"10","message":"Starting receiving files"}
+[2020-10-31 19:26:56.493373] [0x00007f41561dc700] [info] - Socket.connect - connecting to ip = 0.0.0.0, port = 9999
+[2020-10-31 19:26:56.498545] [0x00007f41561dc700] [info] - Socket.doLogin
+[2020-10-31 19:26:56.509603] [0x00007f41561dc700] [info] - Socket.doLogin - User = Gaetano
+[2020-10-31 19:26:56.509714] [0x00007f41561dc700] [info] - Socket.doLogin - Path = /home/gaetano/CLionProjects/remote-backup/inputDirectory
+[2020-10-31 19:26:56.510035] [0x00007f41561dc700] [info] - Socket.sendDirectory - directory = /home/gaetano/CLionProjects/remote-backup/inputDirectory
+[2020-10-31 19:26:56.542944] [0x00007f41561dc700] [info] - Socket.sendFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/IDJEKRJBG.jpg
+[2020-10-31 19:26:56.777519] [0x00007f41561dc700] [info] - Socket.sendFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/prova.html
+[2020-10-31 19:26:56.798894] [0x00007f41561dc700] [info] - Socket.createRemoteDirectory - directoryPath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/directory
+[2020-10-31 19:26:56.799163] [0x00007f41561dc700] [info] - Socket.sendFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/directory/prova2.html
+[2020-10-31 19:26:56.800219] [0x00007f41561dc700] [info] - Socket.sendFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/directory/prova.html
+[2020-10-31 19:26:56.800559] [0x00007f41561dc700] [info] - Socket.finishSending
+[2020-10-31 19:26:56.800894] [0x00007f415621f740] [info] - Socket.connect - connecting to ip = 0.0.0.0, port = 9563
+[2020-10-31 19:26:56.998780] [0x00007f415621f740] [info] - startClient - command = {"code":"10","message":"Starting receiving files"}
+[2020-10-31 19:26:56.999125] [0x00007f41561dc700] [info] - Socket.connect - connecting to ip = 0.0.0.0, port = 9999
+[2020-10-31 19:26:57.058692] [0x00007f41561dc700] [info] - Socket.doLogin
+[2020-10-31 19:26:57.058943] [0x00007f41561dc700] [info] - Socket.doLogin - User = Gaetano
+[2020-10-31 19:26:57.059033] [0x00007f41561dc700] [info] - Socket.doLogin - Path = /home/gaetano/CLionProjects/remote-backup/inputDirectory
+[2020-10-31 19:26:57.059286] [0x00007f41561dc700] [info] - Socket.sendDirectory - directory = /home/gaetano/CLionProjects/remote-backup/inputDirectory
+[2020-10-31 19:26:57.059467] [0x00007f41561dc700] [info] - Socket.sendFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/IDJEKRJBG.jpg
+[2020-10-31 19:26:57.359165] [0x00007f41561dc700] [info] - Socket.sendFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/prova.html
+[2020-10-31 19:26:57.359372] [0x00007f41561dc700] [info] - Socket.createRemoteDirectory - directoryPath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/directory
+[2020-10-31 19:26:57.359514] [0x00007f41561dc700] [info] - Socket.sendFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/directory/prova2.html
+[2020-10-31 19:26:57.359633] [0x00007f41561dc700] [info] - Socket.sendFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/directory/prova.html
+[2020-10-31 19:26:57.359759] [0x00007f41561dc700] [info] - Socket.finishSending
+[2020-10-31 19:26:57.359994] [0x00007f415621f740] [info] - Socket.connect - connecting to ip = 0.0.0.0, port = 9563
+[2020-10-31 19:26:57.432715] [0x00007f415621f740] [info] - startClient - command = {"code":"10","message":"Starting receiving files"}
+[2020-10-31 19:26:57.433128] [0x00007f41561dc700] [info] - Socket.connect - connecting to ip = 0.0.0.0, port = 9999
+[2020-10-31 19:26:57.441832] [0x00007f41561dc700] [info] - Socket.doLogin
+[2020-10-31 19:26:57.442143] [0x00007f41561dc700] [info] - Socket.doLogin - User = Gaetano
+[2020-10-31 19:26:57.442276] [0x00007f41561dc700] [info] - Socket.doLogin - Path = /home/gaetano/CLionProjects/remote-backup/inputDirectory
+[2020-10-31 19:26:57.442660] [0x00007f41561dc700] [info] - Socket.sendDirectory - directory = /home/gaetano/CLionProjects/remote-backup/inputDirectory
+[2020-10-31 19:26:57.442859] [0x00007f41561dc700] [info] - Socket.sendFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/IDJEKRJBG.jpg
+[2020-10-31 19:26:57.724784] [0x00007f41561dc700] [info] - Socket.sendFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/prova.html
+[2020-10-31 19:26:57.724966] [0x00007f41561dc700] [info] - Socket.createRemoteDirectory - directoryPath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/directory
+[2020-10-31 19:26:57.725104] [0x00007f41561dc700] [info] - Socket.sendFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/directory/prova2.html
+[2020-10-31 19:26:57.725239] [0x00007f41561dc700] [info] - Socket.sendFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/directory/prova.html
+[2020-10-31 19:26:57.725364] [0x00007f41561dc700] [info] - Socket.finishSending

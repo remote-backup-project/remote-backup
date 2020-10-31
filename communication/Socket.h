@@ -44,14 +44,18 @@ public:
 
     void connect(std::string ip_address, int port) {
         LOG.info("Socket.connect - connecting to ip = " + ip_address + ", port = " + std::to_string(port));
-        try{
-            socket.connect(asio::ip::tcp::endpoint(
-                    asio::ip::address::from_string(ip_address),
-                    port));
-        }
-        catch(std::exception& exception){
-            LOG.error(exception.what());
-            exit(-1); //TODO considerare che connect non è bloccante e quindi va rifatta ogni x tempo
+        asio::ip::tcp::resolver resolver(io_service);
+        asio::ip::tcp::resolver::results_type results = resolver.resolve("AR-PC", std::to_string(port));
+        for(asio::ip::tcp::endpoint const& endpoint : results)
+        {
+            std::cout << endpoint << "\n";
+            try{
+                socket.connect(endpoint);
+            }
+            catch(std::exception& exception){
+                LOG.error(exception.what());
+                exit(-1); //TODO considerare che connect non è bloccante e quindi va rifatta ogni x tempo
+            }
         }
     }
 
