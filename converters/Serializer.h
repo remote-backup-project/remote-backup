@@ -9,6 +9,7 @@
 #include <iostream>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include "../models/Serializable.h"
 
 class Serializer {
 public:
@@ -17,7 +18,7 @@ public:
      * Serialize custom ->
      *  prevede che il tipo T abbia un metodo writeAsString(boost::property_tree::ptree)
      */
-    template <typename T>
+    template <typename T, typename std::enable_if<std::is_base_of<Serializable, T>::value>::type* = nullptr>
     static std::vector<char> serialize(T obj){
         boost::property_tree::ptree pt;
         obj.writeAsString(pt);

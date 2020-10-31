@@ -16,7 +16,11 @@ public:
         static const int MAX_BYTE = 1024;
     };
     class Socket{
-
+    public:
+        static const int COMMAND_PORT = 9563;
+        static const int FILE_TRANSFER_PORT = 9999;
+        static constexpr const char* LOCAL_NETWORK = "0.0.0.0";
+        static const int START_TRANFER_FILE = 10;
     };
 };
 

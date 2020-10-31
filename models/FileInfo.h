@@ -10,10 +10,11 @@
 #include <vector>
 #include <string>
 #include "../utils/StringUtils.h"
+#include "Serializable.h"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
-class FileInfo{
+class FileInfo : Serializable{
     std::string content;
     std::string path;
     std::string fileName;
@@ -44,8 +45,8 @@ public:
     std::string getFilename() { return fileName; }
     std::string getRelativePath() { return relativePath; }
 
-    bool isValid(){
-        return !this->path.empty();
+    bool end(){
+        return this->path.empty();
     }
 
     bool isDirectory(){

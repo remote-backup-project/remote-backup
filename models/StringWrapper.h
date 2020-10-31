@@ -6,10 +6,11 @@
 #define REMOTE_BACKUP_STRINGWRAPPER_H
 
 #include <string>
+#include "Serializable.h"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
-class StringWrapper{
+class StringWrapper : Serializable{
     std::string content;
 public:
     StringWrapper() {}

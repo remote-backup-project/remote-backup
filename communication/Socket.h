@@ -12,12 +12,12 @@
 #include <boost/asio.hpp>
 #include <filesystem>
 #include <fstream>
-#include "./converters/Deserializer.h"
-#include "./converters/Serializer.h"
-#include "utils/Constants.h"
-#include "models/FileInfo.h"
-#include "models/StringWrapper.h"
-#include "exceptions/FileException.h"
+#include "../converters/Deserializer.h"
+#include "../converters/Serializer.h"
+#include "../utils/Constants.h"
+#include "../models/FileInfo.h"
+#include "../models/StringWrapper.h"
+#include "../exceptions/FileException.h"
 
 namespace fs = std::filesystem;
 namespace asio = boost::asio;
@@ -28,25 +28,30 @@ class Socket {
     Socket(const Socket&) = delete;
     Socket& operator = (const Socket&) = delete;
     Socket(asio::io_service& io_service) : socket(io_service) {
-        std::cout<<"Socket created - 1" <<std::endl;
+        LOG.info("Socket - socket created");
     }
     friend class ServerSocket;
 
 public:
-    Socket() : socket(io_service){
-        std::cout<<"Socket created - 2" <<std::endl;
-    }
+    Socket() : socket(io_service){}
     ~Socket() {
         socket.close();
     }
+
+    void close(){
+        socket.close();
+    }
+
     void connect(std::string ip_address, int port) {
+        LOG.info("Socket.connect - connecting to ip = " + ip_address + ", port = " + std::to_string(port));
         try{
             socket.connect(asio::ip::tcp::endpoint(
                     asio::ip::address::from_string(ip_address),
                     port));
         }
-        catch(std::exception exception){
-            std::cout << exception.what() << std::endl;
+        catch(std::exception& exception){
+            LOG.error(exception.what());
+            exit(-1);
         }
     }
 
@@ -63,9 +68,10 @@ public:
             }while(sizeRecv < size);
             return Deserializer::deserialize<T>(buff);
         }
-        catch(std::exception exception){
-            std::cout << exception.what() << std::endl;
+        catch(std::exception& exception){
+            LOG.error(exception.what());
         }
+        exit(-1);
     }
 
     template <typename T>
@@ -80,13 +86,14 @@ public:
                 sizeSent += socket.send(asio::buffer(reinterpret_cast<char*>(&buff[sizeSent]), (size - sizeSent)*sizeof(char)));
             }while(sizeSent < size);
         }
-        catch(std::exception exception){
-            std::cout << exception.what() << std::endl;
+        catch(std::exception& exception){
+            LOG.error(exception.what());
         }
     }
 
     void sendFile(const std::string& basePath, const std::string& filePath)
     {
+        LOG.info("Socket.sendFile - filePath = " + filePath);
         try{
             std::string v2;
             std::ifstream ifs;
@@ -111,48 +118,52 @@ public:
             ifs.close();
         }
         catch (FileException& exception) {
-            std::cout << exception.getMessage() << std::endl;
+            LOG.error(exception.getMessage());
         }
-        catch(std::exception exception){
-            std::cout << exception.what() << std::endl;
+        catch(std::exception& exception){
+            LOG.error(exception.what());
         }
     }
 
     void finishSending(){
+        LOG.info("Socket.finishSending");
         sendData(FileInfo());
     }
 
-    void createRemoteDirectory(const std::string& basePath, const std::string& directoryPath, asio::ip::tcp::socket& socket){
+    void createRemoteDirectory(const std::string& basePath, const std::string& directoryPath){
+        LOG.info("Socket.createRemoteDirectory - directoryPath = " + directoryPath);
         std::string relativePath = StringUtils::getStringDifference(directoryPath, basePath);
         FileInfo fileInfo("", directoryPath, relativePath);
         sendData(fileInfo);
     }
 
     void sendDirectory(const std::string& directory){
+        LOG.info("Socket.sendDirectory - directory = " + directory);
         fs::path path(directory);
         for(auto &p : fs::recursive_directory_iterator(path)){
             if( !fs::is_directory(p.status()) ){
                 sendFile(directory, p.path().string());
-            }else createRemoteDirectory(directory, p.path().string(), socket);
+            }else this->createRemoteDirectory(directory, p.path().string());
         }
         finishSending();
     }
 
     void doLogin(){
+        LOG.info("Socket.doLogin");
         try{
             std::fstream clientFile;
-            clientFile.open("/home/gaetano/CLionProjects/remote-backup/clientCredentials.txt");
+            clientFile.open("/home/alessandro/CLionProjects/remote-backup/clientCredentials.txt");
             if(!clientFile.is_open())
                 throw FileException("Error opening client credentials file");
             else {
                 std::string temp;
                 std::getline(clientFile, temp);
                 std::string userName(temp);
-                std::cout << "user: " << temp << std::endl;
+                LOG.info("Socket.doLogin - User = " + temp);
 
                 std::getline(clientFile, temp);
                 std::string inputPath(temp);
-                std::cout << "path: " << temp << std::endl;
+                LOG.info("Socket.doLogin - Path = " + temp);
 
                 StringWrapper sentItem(userName + "\n" + inputPath);
                 sendData(sentItem);
@@ -160,11 +171,11 @@ public:
             }
             clientFile.close();
         }
-        catch(FileException exception){
-            std::cout << exception.getMessage() << std::endl;
+        catch(FileException& exception){
+            LOG.error(exception.getMessage());
         }
-        catch(std::exception exception){
-            std::cout << exception.what() << std::endl;
+        catch(std::exception& exception){
+            LOG.error(exception.what());
         }
     }
 };

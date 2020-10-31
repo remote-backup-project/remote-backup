@@ -1,22 +1,77 @@
-#include <iostream>
-#include <filesystem>
-#include <boost/asio.hpp>
 #include <vector>
 #include <string>
+#include <thread>
 #include "utils/Constants.h"
-#include "models/FileInfo.h"
-#include "communication/Pipe.h"
 #include "utils/Logger.h"
-#include "socket.h"
-#include "serverSocket.h"
+#include "communication/Socket.h"
+#include "communication/ServerSocket.h"
 
-namespace fs = std::filesystem;
-namespace asio = boost::asio;
 
-Logger LOG;
+[[noreturn]] void startServer(){
+    LOG.info("startServer");
+    std::string outputDirectory("/home/alessandro/CLionProjects/remote-backup/outputDirectory");
+    ServerSocket fileTransferSocket;
+    ServerSocket commandSocket;
 
-void startServer();
-void startClient();
+    std::vector<std::thread> threads;
+    while(true){
+        commandSocket.accept(Constants::Socket::COMMAND_PORT);
+        auto command = commandSocket.receiveData<Command>();
+
+        LOG.info("startServer - command = " + command.to_string());
+        switch(command.getCode()){
+            case Constants::Socket::START_TRANFER_FILE:
+                for(auto &t : threads){
+                    if(t.joinable()) t.join();
+                }
+                threads.emplace_back([&fileTransferSocket]()
+                 {
+                     fileTransferSocket.accept(Constants::Socket::FILE_TRANSFER_PORT);
+                     fileTransferSocket.serverLoginCheck();
+                     fileTransferSocket.close();
+                 });
+                commandSocket.sendData(Command(Constants::Socket::START_TRANFER_FILE, "Starting receiving files"));
+                break;
+            default:
+                break;
+        }
+        commandSocket.close();
+    }
+//    fileTransferSocket.receiveDirectory(outputDirectory);
+}
+
+void startClient(){
+    LOG.info("startClient");
+    std::string inputDirectory("/home/alessandro/CLionProjects/remote-backup/inputDirectory");
+
+    for(int i=0; i< 3; i++){
+        // commandSocket creation
+        Socket commandSocket;
+        commandSocket.connect(Constants::Socket::LOCAL_NETWORK, Constants::Socket::COMMAND_PORT);
+        commandSocket.sendData(Command(Constants::Socket::START_TRANFER_FILE, "Starting sending files"));
+        auto response = commandSocket.receiveData<Command>();
+        LOG.info("startClient - command = " + response.to_string());
+
+        std::vector<std::thread> threads;
+        Socket fileTransferSocket;
+        switch(response.getCode()){
+            case Constants::Socket::START_TRANFER_FILE:
+                threads.emplace_back([&fileTransferSocket]()
+                 {
+                     fileTransferSocket.connect(Constants::Socket::LOCAL_NETWORK, Constants::Socket::FILE_TRANSFER_PORT);
+                     fileTransferSocket.doLogin();
+                 });
+                break;
+            default:
+                break;
+        }
+
+        for(auto &t : threads)
+            if(t.joinable()) t.join();
+    }
+
+//    commandSocket.sendDirectory(inputDirectory);
+}
 
 
 int main(int argc, char** argv) {
@@ -28,25 +83,4 @@ int main(int argc, char** argv) {
         startClient();
     }
     return 0;
-}
-
-void startServer(){
-    LOG.info("startServer");
-    std::string outputDirectory("/home/gaetano/CLionProjects/remote-backup/outputDirectory");
-    ServerSocket serverSocket;
-    serverSocket.accept(9999);
-    serverSocket.serverLoginCheck();
-
-//    serverSocket.receiveDirectory(outputDirectory);
-}
-
-void startClient(){
-    LOG.info("startClient");
-    std::string inputDirectory("/home/alessandro/CLionProjects/remote-backup/inputDirectory");
-    asio::io_service io_service;
-    // socket creation
-    Socket socket;
-    socket.connect("0.0.0.0", 9999);
-    socket.doLogin();
-//    socket.sendDirectory(inputDirectory);
 }

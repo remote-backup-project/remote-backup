@@ -9,6 +9,7 @@
 #include <iostream>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include "../models/Serializable.h"
 
 class Deserializer {
 public:
@@ -17,7 +18,7 @@ public:
      * Deserialize custom ->
      *  prevede che il tipo T abbia un metodo readAsString(boost::property_tree::ptree)
      */
-    template <typename T>
+    template <typename T, typename std::enable_if<std::is_base_of<Serializable, T>::value>::type* = nullptr>
     static T deserialize(std::vector<char>& v){
         boost::property_tree::ptree pt;
         std::stringstream buf(std::string(v.begin(), v.end()));
