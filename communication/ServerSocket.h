@@ -97,7 +97,7 @@ public:
             else {
                 std::vector<std::string> credentials; //TODO aprire json che ritorna oggetto parsificato
                 std::string temp;
-                std::string outputPath("/home/Gaetano/CLionProjects/remote-backup/outputDirectory");
+                std::string outputPath("/home/gaetano/CLionProjects/remote-backup/outputDirectory");
                 while(std::getline(serverFile, temp)){
                     credentials.push_back(temp);
                 }
@@ -113,7 +113,7 @@ public:
                     std::vector<std::string> tempVector;
                     boost::algorithm::split(tempVector, content, boost::is_any_of("\n"));
                     std::replace(tempVector[1].begin(), tempVector[1].end(), '/', '_');
-                    std::string path("/home/Gaetano/CLionProjects/remote-backup/outputDirectory/" +
+                    std::string path("/home/gaetano/CLionProjects/remote-backup/outputDirectory/" +
                                      tempVector[0] + "_" + tempVector[1]);
                     receiveDirectory(path);
                 } else {
@@ -124,7 +124,7 @@ public:
                     std::vector<std::string> tempVector;
                     boost::algorithm::split(tempVector, content, boost::is_any_of("\n"));
                     std::replace(tempVector[1].begin(), tempVector[1].end(), '/', '_');
-                    std::string path("/home/Gaetano/CLionProjects/remote-backup/outputDirectory/" +
+                    std::string path("/home/gaetano/CLionProjects/remote-backup/outputDirectory/" +
                                      tempVector[0] + "_" + tempVector[1]);
                     fs::create_directory(path);
                     receiveDirectory(path);
