@@ -9,7 +9,6 @@
 
 [[noreturn]] void startServer(){
     LOG.info("startServer");
-    std::string outputDirectory("/home/alessandro/CLionProjects/remote-backup/outputDirectory");
     ServerSocket fileTransferSocket;
     ServerSocket commandSocket;
 
@@ -42,7 +41,6 @@
 
 void startClient(){
     LOG.info("startClient");
-    std::string inputDirectory("/home/alessandro/CLionProjects/remote-backup/inputDirectory");
 
     for(int i=0; i< 3; i++){
         // commandSocket creation

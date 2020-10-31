@@ -51,7 +51,7 @@ public:
         }
         catch(std::exception& exception){
             LOG.error(exception.what());
-            exit(-1);
+            exit(-1); //TODO considerare che connect non è bloccante e quindi va rifatta ogni x tempo
         }
     }
 
@@ -152,11 +152,11 @@ public:
         LOG.info("Socket.doLogin");
         try{
             std::fstream clientFile;
-            clientFile.open("/home/alessandro/CLionProjects/remote-backup/clientCredentials.txt");
+            clientFile.open("../clientCredentials.txt");
             if(!clientFile.is_open())
-                throw FileException("Error opening client credentials file");
+                throw FileException("Error opening client credentials file"); //TODO fare inserire credenziali e creare file
             else {
-                std::string temp;
+                std::string temp; //TODO aprire json che ritorna oggetto parsificato
                 std::getline(clientFile, temp);
                 std::string userName(temp);
                 LOG.info("Socket.doLogin - User = " + temp);
@@ -165,7 +165,7 @@ public:
                 std::string inputPath(temp);
                 LOG.info("Socket.doLogin - Path = " + temp);
 
-                StringWrapper sentItem(userName + "\n" + inputPath);
+                StringWrapper sentItem(userName + "\n" + inputPath); //TODO usare classe Command
                 sendData(sentItem);
                 sendDirectory(inputPath);
             }

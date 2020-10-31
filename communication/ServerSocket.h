@@ -90,30 +90,30 @@ public:
         LOG.info("ServerSocket.serverLoginCheck");
         try{
             std::fstream serverFile;
-            serverFile.open("/home/alessandro/CLionProjects/remote-backup/serverCredentials.txt");
+            serverFile.open("../serverCredentials.txt");
             if(!serverFile.is_open()) {
-                throw FileException("Error opening server credentials file");
+                throw FileException("Error opening server credentials file");  //TODO crea file e inserire path master
             }
             else {
-                std::vector<std::string> credentials;
+                std::vector<std::string> credentials; //TODO aprire json che ritorna oggetto parsificato
                 std::string temp;
-                std::string outputPath("/home/alessandro/CLionProjects/remote-backup/outputDirectory");
+                std::string outputPath("/home/Gaetano/CLionProjects/remote-backup/outputDirectory");
                 while(std::getline(serverFile, temp)){
                     credentials.push_back(temp);
                 }
                 serverFile.clear();
                 serverFile.seekg(0);
-                auto receivedCredentials = receiveData<StringWrapper>();
+                auto receivedCredentials = receiveData<StringWrapper>(); //TODO usare classe Command
                 auto content = receivedCredentials.getContent();
                 std::string checkingString(content);
                 std::replace(checkingString.begin(), checkingString.end(), '\n', ',');
-                if(std::find(credentials.begin(), credentials.end(), checkingString) != credentials.end()) {
+                if(std::find(credentials.begin(), credentials.end(), checkingString) != credentials.end()) { //TODO cambiare condizione if a check esistenza cartella
                     LOG.info("ServerSocket.serverLoginCheck - Found User and Path");
                     /* credentials present */
                     std::vector<std::string> tempVector;
                     boost::algorithm::split(tempVector, content, boost::is_any_of("\n"));
                     std::replace(tempVector[1].begin(), tempVector[1].end(), '/', '_');
-                    std::string path("/home/alessandro/CLionProjects/remote-backup/outputDirectory/" +
+                    std::string path("/home/Gaetano/CLionProjects/remote-backup/outputDirectory/" +
                                      tempVector[0] + "_" + tempVector[1]);
                     receiveDirectory(path);
                 } else {
@@ -124,7 +124,7 @@ public:
                     std::vector<std::string> tempVector;
                     boost::algorithm::split(tempVector, content, boost::is_any_of("\n"));
                     std::replace(tempVector[1].begin(), tempVector[1].end(), '/', '_');
-                    std::string path("/home/alessandro/CLionProjects/remote-backup/outputDirectory/" +
+                    std::string path("/home/Gaetano/CLionProjects/remote-backup/outputDirectory/" +
                                      tempVector[0] + "_" + tempVector[1]);
                     fs::create_directory(path);
                     receiveDirectory(path);
