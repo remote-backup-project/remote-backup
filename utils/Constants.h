@@ -13,7 +13,7 @@ public:
         static const int CHILD = 0;
         static const int READ = 0;
         static const int WRITE = 1;
-        static const int MAX_BYTE = 10000;
+        static const int MAX_BYTE = 10;
     };
     class Socket{
     public:

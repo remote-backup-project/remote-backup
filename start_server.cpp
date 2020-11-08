@@ -9,7 +9,7 @@ int main() {
 
     try
     {
-        Server server("0.0.0.0", "9563", 1);
+        Server server(1);
         server.run();
     }
     catch (std::exception& e)

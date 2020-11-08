@@ -8,6 +8,8 @@
 #include <sstream>
 #include <string>
 #include <filesystem>
+#include "../models/FileConfig.h"
+
 
 namespace fs = std::filesystem;
 namespace asio = boost::asio;
@@ -44,7 +46,7 @@ void RequestHandler::transferDirectory(Request& request, Response& response)
                  std::to_string(fileChunk.getChunkNumber()));
         try
         {
-            fs::path path("/home/alessandro/CLionProjects/remote-backup/outputDirectory" + fileChunk.getRelativePath());
+            fs::path path(fileConfig.getOutputDirPath() + fileChunk.getRelativePath());
 
             if (!fs::exists(path))
                 fs::create_directory(path);
@@ -78,11 +80,11 @@ void RequestHandler::transferFile(Request &request, Response &response)
             std::ofstream ofs3;
             if(fileChunk.getChunkNumber() == 1)
             {
-                ofs3 = std::ofstream("/home/alessandro/CLionProjects/remote-backup/outputDirectory" + fileChunk.getRelativePath(), std::ios::out | std::ios::binary);
+                ofs3 = std::ofstream(fileConfig.getOutputDirPath() + fileChunk.getRelativePath(), std::ios::out | std::ios::binary);
             }
             else
             {
-                ofs3 = std::ofstream("/home/alessandro/CLionProjects/remote-backup/outputDirectory" + fileChunk.getRelativePath(), std::ios::out | std::ios::binary | std::ios::app);
+                ofs3 = std::ofstream(fileConfig.getOutputDirPath() + fileChunk.getRelativePath(), std::ios::out | std::ios::binary | std::ios::app);
             }
 
             if(!ofs3.is_open())

@@ -12,6 +12,9 @@
 #include "../models/Command.h"
 #include <algorithm>
 #include "../utils/Logger.h"
+#include "../models/FileConfig.h"
+#include "../utils/StringUtils.h"
+
 
 //TODO da levare ma da prendere logica login e modificarla
 class ServerSocket : public Socket{
@@ -90,51 +93,22 @@ public:
     void serverLoginCheck(){
         LOG.info("ServerSocket.serverLoginCheck");
         try{
-            std::fstream serverFile;
-            serverFile.open("../serverCredentials.txt");
-            if(!serverFile.is_open()) {
-                throw FileException("Error opening server credentials file");  //TODO crea file e inserire path master
-            }
-            else {
-                std::vector<std::string> credentials; //TODO aprire json che ritorna oggetto parsificato
-                std::string temp;
-                std::string outputPath("/home/gaetano/CLionProjects/remote-backup/outputDirectory");
-                while(std::getline(serverFile, temp)){
-                    credentials.push_back(temp);
-                }
-                serverFile.clear();
-                serverFile.seekg(0);
-                auto receivedCredentials = receiveData<StringWrapper>(); //TODO usare classe Command
-                auto content = receivedCredentials.getContent();
-                std::string checkingString(content);
-                std::replace(checkingString.begin(), checkingString.end(), '\n', ',');
-                if(std::find(credentials.begin(), credentials.end(), checkingString) != credentials.end()) { //TODO cambiare condizione if a check esistenza cartella
-                    LOG.info("ServerSocket.serverLoginCheck - Found User and Path");
-                    /* credentials present */
-                    std::vector<std::string> tempVector;
-                    boost::algorithm::split(tempVector, content, boost::is_any_of("\n"));
-                    std::replace(tempVector[1].begin(), tempVector[1].end(), '/', '_');
-                    std::string path("/home/gaetano/CLionProjects/remote-backup/outputDirectory/" +
-                                     tempVector[0] + "_" + tempVector[1]);
-                    receiveDirectory(path);
-                } else {
-                    /* credentials not present */
-                    LOG.info("ServerSocket.serverLoginCheck - User NOT found -> creation of user folder");
-                    serverFile<<checkingString<<std::endl;
+            auto receivedCredentials = receiveData<Command>();
+            auto content = receivedCredentials.getMessage();
+            std::vector<std::string> tempVector = StringUtils::split(content, "\n");
+            std::replace(tempVector[1].begin(), tempVector[1].end(), '/', '_');
+            std::string path(fileConfig.getOutputDirPath() + tempVector[0] + "_" + tempVector[1]);
+            if(fs::exists(path)) {
+                LOG.info("ServerSocket.serverLoginCheck - Found User and Path");
+                /* credentials present */
+                receiveDirectory(path);
+            } else {
+                /* credentials not present */
+                LOG.info("ServerSocket.serverLoginCheck - User NOT found -> creation of user folder");
 
-                    std::vector<std::string> tempVector;
-                    boost::algorithm::split(tempVector, content, boost::is_any_of("\n"));
-                    std::replace(tempVector[1].begin(), tempVector[1].end(), '/', '_');
-                    std::string path("/home/gaetano/CLionProjects/remote-backup/outputDirectory/" +
-                                     tempVector[0] + "_" + tempVector[1]);
-                    fs::create_directory(path);
-                    receiveDirectory(path);
-                }
+                fs::create_directory(path);
+                receiveDirectory(path);
             }
-            serverFile.close();
-        }
-        catch(FileException& exception){
-            LOG.error(exception.getMessage()); // TODO sbagliato perchè viene lanciata nella stessa funzione
         }
         catch(std::exception& exception){
             LOG.error(exception.what());

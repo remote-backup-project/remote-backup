@@ -12,9 +12,7 @@
 
 class Server : private boost::noncopyable {
 public:
-    explicit Server(const std::string& address,
-                    const std::string& port,
-                    std::size_t thread_pool_size);
+    explicit Server(std::size_t thread_pool_size);
 
     void run();
 
