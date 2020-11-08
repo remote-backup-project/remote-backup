@@ -9,7 +9,7 @@ int main() {
 
     try
     {
-        Server server(1);
+        Server server(2);
         server.run();
     }
     catch (std::exception& e)

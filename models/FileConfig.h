@@ -35,20 +35,25 @@ public:
     FileConfig(std::string inputDirPath, std::string outputDirPath, std::string username, std::string hostname, std::string port);
 
     std::string getInputDirPath();
+
     std::string getOutputDirPath();
+
     std::string getUsername();
+
     std::string getHostname();
+
     std::string getPort();
 
-    void writeAsString(boost::property_tree::ptree& pt);
 
-    void readAsString(boost::property_tree::ptree& pt);
+    void writeAsString(boost::property_tree::ptree& pt) override;
+
+    void readAsString(boost::property_tree::ptree& pt) override;
 
     void readServerFile();
 
     void readClientFile();
 
-    std::string to_string();
+    std::string to_string() override;
 };
 
 extern FileConfig fileConfig;

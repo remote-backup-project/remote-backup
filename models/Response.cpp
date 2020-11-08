@@ -4,43 +4,11 @@
 
 #include "Response.h"
 
-namespace stock_replies {
-
-    const char ok[] = "OK";
-    const char bad_request[] = "BAD REQUEST";
-    const char unauthorized[] = "UNAUTHORIZED";
-    const char forbidden[] = "FORBIDDEN";
-    const char not_found[] = "NOT FOUND";
-    const char internal_server_error[] = "INTERNAL SERVER ERROR";
-
-    std::string to_string(Response::StatusType status)
-    {
-        switch (status)
-        {
-            case Response::ok:
-                return ok;
-            case Response::bad_request:
-                return bad_request;
-            case Response::unauthorized:
-                return unauthorized;
-            case Response::forbidden:
-                return forbidden;
-            case Response::not_found:
-                return not_found;
-            case Response::internal_server_error:
-                return internal_server_error;
-            default:
-                return internal_server_error;
-        }
-    }
-
-}
-
-Response Response::stockResponse(Response::StatusType status)
+Response Response::stockResponse(StockResponse::StatusType status)
 {
     Response response;
     response.status = status;
-    response.content = stock_replies::to_string(status);
+    response.content = StringUtils::response_to_string(status);
     return response;
 }
 
@@ -69,7 +37,7 @@ void Response::writeAsString(boost::property_tree::ptree& pt)
 void Response::readAsString(boost::property_tree::ptree& pt)
 {
     this->content = pt.get<std::string>("content");
-    this->status = static_cast<StatusType>(pt.get<int>("status"));
+    this->status = static_cast<StockResponse::StatusType>(pt.get<int>("status"));
     auto headersString = pt.get<std::string>("headers");
     this->headers = Deserializer::deserializeVector<Header>(headersString);
 }

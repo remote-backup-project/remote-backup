@@ -18,10 +18,13 @@ public:
     void handleRequest(Request& request, Response& response);
 
 private:
+    std::string outputDirPath;
 
     void transferDirectory(Request& request, Response& response);
 
     void transferFile(Request& request, Response& response);
+
+    bool authenticateClient(Request& request, Response& response);
 };
 
 

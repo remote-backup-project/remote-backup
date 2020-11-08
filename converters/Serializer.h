@@ -37,7 +37,7 @@ public:
         for(T el : vector){
             auto serialized = serialize(el);
             std::string serializedString(serialized.begin(), serialized.end());
-            s.append(serializedString);
+            s.append(serializedString + "\r\n");
         }
         s.append("]");
         return s;

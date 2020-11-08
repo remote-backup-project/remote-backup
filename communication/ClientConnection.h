@@ -25,9 +25,7 @@ class ClientConnection
           private boost::noncopyable
 {
 public:
-    explicit ClientConnection(boost::asio::io_context& ioContext,
-                              std::string& server,
-                              std::string& port);
+    explicit ClientConnection(boost::asio::io_context& ioContext);
 
 
     void start();
@@ -56,10 +54,6 @@ private:
 
     FileChunk fileChunk;
 
-    std::string hostname;
-
-    std::string port;
-
     Parser parser;
 
     void handleResolve(const boost::system::error_code& err);
@@ -69,6 +63,8 @@ private:
     void handleWrite(const boost::system::error_code& err);
 
     void handleRead(const boost::system::error_code& err, std::size_t bytes_transferred);
+
+    void restart();
 };
 
 typedef boost::shared_ptr<ClientConnection> ClientConnectionPtr;

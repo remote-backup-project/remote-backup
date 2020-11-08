@@ -14,13 +14,13 @@ Logger::Logger(){
 
     logging::add_console_log(
             std::cout,
-            keywords::format = "[%TimeStamp%] [%ThreadID%] [%Severity%] - %Message%"
+            keywords::format = "[%TimeStamp%] [%Severity%] - %Message%"
     );
     logging::add_file_log(
             keywords::file_name = "../logs/logs.log",
             keywords::auto_flush = true,
-            keywords::rotation_size = 5 * 1024 * 1024,
-            keywords::format = "[%TimeStamp%] [%ThreadID%] [%Severity%] - %Message%"
+            keywords::rotation_size = 5 * 1024 * 1024 * 1024,
+            keywords::format = "[%TimeStamp%] [%Severity%] - %Message%"
     );
 
     logging::add_common_attributes();

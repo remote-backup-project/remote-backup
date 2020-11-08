@@ -53,7 +53,7 @@ void ServerConnection::handleRead(const boost::system::error_code& e, std::size_
         }
         else if (!result)
         {
-            response = Response::stockResponse(Response::bad_request);
+            response = Response::stockResponse(StockResponse::bad_request);
             LOG.error("ServerConnection::handleRead - Response = < " + std::to_string(response.status) + " - Wrong request format  >");
             StringUtils::fillStreambuf(buffer, response.to_string());
             boost::asio::async_write(socket, buffer,
@@ -75,7 +75,7 @@ void ServerConnection::handleRead(const boost::system::error_code& e, std::size_
     }
     else
     {   //TODO da vedere se fare altro in caso di errore di lettura
-        response = Response::stockResponse(Response::internal_server_error);
+        response = Response::stockResponse(StockResponse::internal_server_error);
         LOG.error("ServerConnection::handleRead - Response = < " + std::to_string(response.status) + " - " + e.message() + "  >");
         StringUtils::fillStreambuf(buffer, response.to_string());
         boost::asio::async_write(socket, buffer,

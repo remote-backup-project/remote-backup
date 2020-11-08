@@ -25,10 +25,9 @@ public:
     Request(std::string uri, std::vector<Header>& headers, std::string body);
 
     std::string getUri();
-    std::vector<Header> getHeaders();
-    void addHeader(Header& header);
+    std::vector<Header>& getHeaders();
+    void addHeader(Header header);
     std::string getBody();
-    std::vector<boost::asio::const_buffer> toBuffers();
 
     void writeAsString(boost::property_tree::ptree& pt) override;
 

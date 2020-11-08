@@ -106,7 +106,7 @@ std::string StringUtils::getStringDifference(const std::string& s1, const std::s
 
 std::vector<std::string> StringUtils::split(const std::string& s, const std::string& delimitator){
     std::vector<std::string> results;
-    boost::split(results, s, boost::is_any_of("/"));
+    boost::split(results, s, boost::is_any_of(delimitator));
     return results;
 }
 
@@ -121,3 +121,25 @@ std::string StringUtils::fillFromStreambuf(boost::asio::streambuf& streambuf){
     is >> s;
     return s;
 }
+
+std::string StringUtils::response_to_string(StockResponse::StatusType status){
+    switch (status)
+    {
+        case StockResponse::ok:
+            return StockResponse::OK;
+        case StockResponse::bad_request:
+            return StockResponse::BAD_REQUEST;
+        case StockResponse::unauthorized:
+            return StockResponse::UNAUTHORIZED;
+        case StockResponse::forbidden:
+            return StockResponse::FORBIDDEN;
+        case StockResponse::not_found:
+            return StockResponse::NOT_FOUND;
+        case StockResponse::internal_server_error:
+            return StockResponse::INTERNAL_SERVER_ERROR;
+        default:
+            return StockResponse::INTERNAL_SERVER_ERROR;
+    }
+}
+
+

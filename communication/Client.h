@@ -17,9 +17,8 @@ public:
 
 private:
 
-    std::string server;
-    std::string port;
     ClientConnectionPtr clientConnectionPtr;
+
     boost::asio::io_context ioContext;
 
     void sendFile(const std::string& basePath, const std::string& filePath);

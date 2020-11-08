@@ -47,11 +47,13 @@ public:
             !boost::algorithm::equals(string, "[]"))
         {
             std::string temp = string.substr(1, string.size()-2);
-            std::vector<std::string> splitted = StringUtils::split(temp, "\n");
+            std::vector<std::string> splitted = StringUtils::split(temp, "\r\n");
             for(std::string s: splitted){
-                std::vector<char> charVector(s.begin(), s.end());
-                auto deserialized = deserialize<T>(charVector);
-                vector.push_back(deserialized);
+                if(!s.empty()){
+                    std::vector<char> charVector(s.begin(), s.end());
+                    auto deserialized = deserialize<T>(charVector);
+                    vector.push_back(deserialized);
+                }
             }
         }
         return vector;

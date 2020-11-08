@@ -9,6 +9,7 @@
 #include <boost/asio.hpp>
 #include <string>
 #include <vector>
+#include "Constants.h"
 
 class StringUtils{
 public:
@@ -38,6 +39,8 @@ public:
      * @return  streambuf -> string (dopo questa operazione streambuf è vuoto)
      */
     static std::string fillFromStreambuf(boost::asio::streambuf& streambuf);
+
+    static std::string response_to_string(StockResponse::StatusType status);
 };
 
 #endif //REMOTE_BACKUP_STRINGUTILS_H

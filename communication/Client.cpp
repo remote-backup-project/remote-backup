@@ -20,8 +20,6 @@ namespace asio = boost::asio;
 Client::Client(): clientConnectionPtr()
 {
     fileConfig.readClientFile();
-    server = fileConfig.getHostname();
-    port = fileConfig.getPort();
     sendDirectory(fileConfig.getInputDirPath());
 }
 
@@ -42,14 +40,14 @@ void Client::sendFile(const std::string& basePath, const std::string& filePath)
             return;
         }
 
-        std::vector<char> data(Constants::Pipe::MAX_BYTE + 1,0);
+        std::vector<char> data(Socket::CHUNK_DIMENSION + 1,0);
         while (true)
         {
-            ifs.read(data.data(), Constants::Pipe::MAX_BYTE);
-            std::streamsize s = ((ifs)? Constants::Pipe::MAX_BYTE : ifs.gcount());
+            ifs.read(data.data(), Socket::CHUNK_DIMENSION);
+            std::streamsize s = ((ifs)? Socket::CHUNK_DIMENSION : ifs.gcount());
             data[s] = 0;
             FileChunk fileChunk(std::string(data.data(), s), filePath, StringUtils::getStringDifference(filePath, basePath));
-            sendData("/transfer/file", fileChunk.to_string());
+            sendData(Services::TRANSFER_FILE, fileChunk.to_string());
 
             if(!ifs)
                 break;
@@ -65,7 +63,7 @@ void Client::createRemoteDirectory(const std::string& basePath, const std::strin
     LOG.info("Client::createRemoteDirectory - directoryPath = " + directoryPath);
     std::string relativePath = StringUtils::getStringDifference(directoryPath, basePath);
     FileChunk fileChunk("", directoryPath, relativePath);
-    sendData("/transfer/directory", fileChunk.to_string());
+    sendData(Services::TRANSFER_DIRECTORY, fileChunk.to_string());
 }
 
 void Client::sendDirectory(const std::string& directory){
@@ -81,7 +79,7 @@ void Client::sendDirectory(const std::string& directory){
 void Client::sendData(std::string uri, std::string body)
 {
     Request request(std::move(uri), std::move(body));
-    clientConnectionPtr.reset(new ClientConnection(ioContext, server, port));
+    clientConnectionPtr.reset(new ClientConnection(ioContext));
     clientConnectionPtr->setRequest(request);
     clientConnectionPtr->start();
 }

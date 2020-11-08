@@ -23,9 +23,9 @@ Request::Request(std::string uri, std::vector<Header>& headers, std::string body
 
 std::string Request::getUri(){ return uri; }
 
-std::vector<Header> Request::getHeaders(){ return headers; }
+std::vector<Header>& Request::getHeaders(){ return headers; }
 
-void Request::addHeader(Header& header) { headers.push_back(header); }
+void Request::addHeader(Header header) { headers.push_back(header); }
 
 std::string Request::getBody(){ return body; }
 
@@ -40,12 +40,6 @@ void Request::readAsString(boost::property_tree::ptree& pt){
     this->body = pt.get<std::string>("body");
     auto headersString = pt.get<std::string>("headers");
     this->headers = Deserializer::deserializeVector<Header>(headersString);
-}
-
-std::vector<boost::asio::const_buffer> Request::toBuffers(){
-    std::vector<boost::asio::const_buffer> buffers;
-    buffers.push_back(boost::asio::buffer(this->to_string()));
-    return buffers;
 }
 
 void Request::append(std::string string){ requestString.append(string); }

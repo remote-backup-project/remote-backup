@@ -13,30 +13,32 @@
 #include <boost/logic/tribool.hpp>
 #include "../utils/Logger.h"
 #include "../converters/Deserializer.h"
+#include "../models/FileConfig.h"
+#include "../utils/Constants.h"
 
 using boost::asio::ip::tcp;
 namespace asio = boost::asio;
 
-ClientConnection::ClientConnection(boost::asio::io_context& ioContext,
-                                   std::string& hostname,
-                                   std::string& port):
+ClientConnection::ClientConnection(boost::asio::io_context& ioContext):
    strand(ioContext),
    socket(ioContext),
-   resolver(ioContext),
-   hostname(hostname),
-   port(port)
+   resolver(ioContext)
 {}
 
 void ClientConnection::setRequest(Request request){
     this->request = request;
-    this->fileChunk = Deserializer::deserialize<FileChunk>(request.getBody());
+    this->request.addHeader(Header(Config::USERNAME, fileConfig.getUsername()));
+    std::string inputDirPath(fileConfig.getInputDirPath());
+    std::replace(inputDirPath.begin(), inputDirPath.end(), '/', '_');
+    this->request.addHeader(Header(Config::INPUT_DIR_PATH, inputDirPath));
+    this->fileChunk = Deserializer::deserialize<FileChunk>(request.getBody()); // serve solo per i log
 }
 
 void ClientConnection::start()
 {
     LOG.info("ClientConnection::start - File/Directory = " + fileChunk.getRelativePath() + ", Chuck = " + std::to_string(fileChunk.getChunkNumber()));
     boost::system::error_code error;
-    this->endpoints = resolver.resolve(asio::ip::tcp::resolver::query(hostname, port), error);
+    this->endpoints = resolver.resolve(asio::ip::tcp::resolver::query(fileConfig.getHostname(), fileConfig.getPort()), error);
     handleResolve(error);
 }
 
@@ -54,8 +56,7 @@ void ClientConnection::handleResolve(const boost::system::error_code& err)
     else
     {
         LOG.warning("ClientConnection::handleResolve - < message : " + err.message() + " > - Retrying in 5 seconds");
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-        start();
+        restart();
     }
 }
 
@@ -73,13 +74,7 @@ void ClientConnection::handleConnect(const boost::system::error_code& err)
     else
     {
         LOG.warning("ClientConnection::handleConnect - < message : " + err.message() + " > - Retrying in 5 seconds");
-        socket.close();
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-
-        if(endpoint == endpoints.end())
-            start();
-        else
-            handleResolve(boost::system::error_code());
+        restart();
     }
 }
 
@@ -101,9 +96,7 @@ void ClientConnection::handleWrite(const boost::system::error_code& err)
     else
     {
         LOG.error("ClientConnection::handleWrite - < message :  " + err.message() + " > - Retrying in 5 seconds");
-        socket.close();
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-        start();
+        restart();
     }
 }
 
@@ -121,16 +114,15 @@ void ClientConnection::handleRead(const boost::system::error_code& e, std::size_
         if(result)
         {
             switch (response.status) {
-                case Response::ok:
+                case StockResponse::ok:
                     LOG.info("ClientConnection::handleRead - Response < " + std::to_string(response.status) + " : " + response.getContent() + " >");
                     break;
-                case Response::not_found:
-                case Response::internal_server_error: //TODO aggiungere caso forbidden o unauthorized quando aggiungi login
+                case StockResponse::not_found:
+                case StockResponse::internal_server_error:
+                case StockResponse::unauthorized:
                     LOG.error("ClientConnection::handleRead - Response < " + std::to_string(response.status) + " : " + response.getContent() + " >");
                     LOG.warning("ClientConnection::handleRead - Retrying in 5 seconds");
-                    socket.close();
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                    start();
+                    restart();
                     break;
                 default:
                     LOG.warning("ClientConnection::handleRead - Unexpected Response < " + std::to_string(response.status) + " : " + response.getContent() + " >");
@@ -140,9 +132,7 @@ void ClientConnection::handleRead(const boost::system::error_code& e, std::size_
         {
             LOG.warning("ClientConnection::handleRead - Cannot read Response = " + std::string(array.data(), bytes_transferred));
             LOG.warning("ClientConnection::handleRead - Retrying in 5 seconds");
-            socket.close();
-            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-            start();
+            restart();
         }
         else
         {
@@ -159,4 +149,11 @@ void ClientConnection::handleRead(const boost::system::error_code& e, std::size_
     {   //TODO da vedere se fare altro in caso di errore di lettura
         LOG.error("ClientConnection::handleRead - Unexpected error , < " + e.message() + " >");
     }
+}
+
+void ClientConnection::restart()
+{
+    socket.close();
+    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+    start();
 }

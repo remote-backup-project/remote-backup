@@ -9,30 +9,25 @@
 #include "../converters/Serializer.h"
 
 class Header: public Serializable{
+
     std::string name;
+
     std::string value;
 
 public:
-    Header(){};
-    Header(std::string name, std::string value): name(name), value(value){};
+    Header();
 
-    std::string getName(){ return name; }
-    std::string getValue(){ return value; }
+    Header(std::string name, std::string value);
 
-    void writeAsString(boost::property_tree::ptree& pt) override {
-        pt.put("name", this->name);
-        pt.put("value", this->value);
-    }
+    std::string getName();
 
-    void readAsString(boost::property_tree::ptree& pt) override {
-        this->name = pt.get<std::string>("name");
-        this->value = pt.get<std::string>("value");
-    }
+    std::string getValue();
 
-    std::string to_string() override {
-        auto string = Serializer::serialize(*this);
-        return std::string(string.begin(), string.end());
-    }
+    void writeAsString(boost::property_tree::ptree& pt) override;
+
+    void readAsString(boost::property_tree::ptree& pt) override;
+
+    std::string to_string() override;
 };
 
 
