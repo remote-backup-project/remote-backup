@@ -15,9 +15,12 @@
 #include "../converters/Deserializer.h"
 #include "../converters/Serializer.h"
 #include "../utils/Constants.h"
-#include "../models/FileInfo.h"
-#include "../models/Command.h"
+#include "../models/FileChunk.h"
+#include "../models/StringWrapper.h"
 #include "../exceptions/FileException.h"
+#include "ServerConnection.h"
+#include <boost/thread/thread.hpp>
+#include "../models/Command.h"
 #include "../models/FileConfig.h"
 
 namespace fs = std::filesystem;
@@ -157,7 +160,7 @@ public:
         finishSending();
     }
 
-    void doLogin(FileConfig fileConfig){
+    void doLogin(){
         LOG.info("Socket.doLogin");
         try{
             Command sentItem(100, fileConfig.getUsername() + "\n" + fileConfig.getInputDirPath());

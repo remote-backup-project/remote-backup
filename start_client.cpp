@@ -9,10 +9,7 @@ int main()
 {
     try
     {
-        std::string server = "AR-PC";
-        std::string port = "9563";
-
-        Client client(server, port);
+        Client client;
         client.run();
     }
     catch (std::exception& e)

@@ -9,10 +9,12 @@
 #include <stdexcept>
 #include <cstring>
 #include "Socket.h"
-#include <algorithm>
 #include "../models/Command.h"
+#include <algorithm>
 #include "../utils/Logger.h"
+#include "../models/FileConfig.h"
 #include "../utils/StringUtils.h"
+
 
 //TODO da levare ma da prendere logica login e modificarla
 class ServerSocket : public Socket{
@@ -88,27 +90,21 @@ public:
         }
     }
 
-    void serverLoginCheck(FileConfig fileConfig){
+    void serverLoginCheck(){
         LOG.info("ServerSocket.serverLoginCheck");
         try{
             auto receivedCredentials = receiveData<Command>();
             auto content = receivedCredentials.getMessage();
-            std::string checkingString(content);
-            std::replace(checkingString.begin(), checkingString.end(), '\n', ',');
-            if(fs::exists(fileConfig.getOutputDirPath() + checkingString)) {
+            std::vector<std::string> tempVector = StringUtils::split(content, "\n");
+            std::replace(tempVector[1].begin(), tempVector[1].end(), '/', '_');
+            std::string path(fileConfig.getOutputDirPath() + tempVector[0] + "_" + tempVector[1]);
+            if(fs::exists(path)) {
                 LOG.info("ServerSocket.serverLoginCheck - Found User and Path");
                 /* credentials present */
-                std::vector<std::string> tempVector = StringUtils::split(content, "\n");
-                std::replace(tempVector[1].begin(), tempVector[1].end(), '/', '_');
-                std::string path(fileConfig.getOutputDirPath() + tempVector[0] + "_" + tempVector[1]);
                 receiveDirectory(path);
             } else {
                 /* credentials not present */
                 LOG.info("ServerSocket.serverLoginCheck - User NOT found -> creation of user folder");
-
-                std::vector<std::string> tempVector = StringUtils::split(content, "\n");
-                std::replace(tempVector[1].begin(), tempVector[1].end(), '/', '_');
-                std::string path(fileConfig.getOutputDirPath() + tempVector[0] + "_" + tempVector[1]);
 
                 fs::create_directory(path);
                 receiveDirectory(path);

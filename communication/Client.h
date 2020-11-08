@@ -11,7 +11,7 @@
 
 class Client{
 public:
-    Client(std::string  server, std::string port);
+    Client();
 
     void run();
 

@@ -15,6 +15,7 @@
 #include "Serializable.h"
 #include "../utils/StringUtils.h"
 #include "../converters/Deserializer.h"
+#include "../converters/Serializer.h"
 
 namespace fs = std::filesystem;
 
@@ -23,126 +24,33 @@ class FileConfig : Serializable{
     std::string outputDirPath;
     std::string username;
     std::string hostname;
+    std::string port;
 
-    void createServerConfigFile(){
-        std::fstream configFile;
-        std::string hostname, outputDirPath;
-        std::cout << "Inserire hostname: " << std::endl;
-        getline(std::cin, hostname);
-        std::cout << "Inserire path della output directory: " << std::endl;
-        getline(std::cin, outputDirPath);
-        FileConfig temp("", outputDirPath, "", hostname);
-        auto res = Serializer::serialize(temp);
-        configFile.open("../config.json", std::fstream::out);
-        configFile << res.data();
-        configFile.close();
+    void createServerConfigFile();
 
-        if(!fs::exists(outputDirPath))
-            fs::create_directory(outputDirPath);
-
-        readServerFile();
-    }
-
-    void createClientConfigFile(){
-        std::fstream configFile;
-        std::string username, inputDirPath;
-        std::cout << "Inserire username: " << std::endl;
-        getline(std::cin, username);
-        std::cout << "Inserire path della input directory: " << std::endl;
-        getline(std::cin, inputDirPath);
-        FileConfig temp(inputDirPath, "", username, "");
-        auto res = Serializer::serialize(temp);
-        configFile.open("../config.json", std::fstream::out);
-        configFile << res.data();
-        configFile.close();
-
-        readClientFile();
-    }
+    void createClientConfigFile();
 
 public:
-    FileConfig(){};
-    FileConfig(std::string inputDirPath, std::string outputDirPath, std::string username, std::string hostname):
-            inputDirPath(std::move(inputDirPath)),
-            outputDirPath(std::move(outputDirPath)),
-            username(std::move(username)),
-            hostname(std::move(hostname)){};
+    FileConfig();
+    FileConfig(std::string inputDirPath, std::string outputDirPath, std::string username, std::string hostname, std::string port);
 
-    std::string getInputDirPath(){ return inputDirPath; }
-    std::string getOutputDirPath(){ return outputDirPath; }
-    std::string getUsername() { return username; }
-    std::string getHostname() { return hostname; }
+    std::string getInputDirPath();
+    std::string getOutputDirPath();
+    std::string getUsername();
+    std::string getHostname();
+    std::string getPort();
 
-    void writeAsString(boost::property_tree::ptree& pt){
-        pt.put("inputDirPath", StringUtils::encodeBase64(this->inputDirPath));
-        pt.put("outputDirPath", this->outputDirPath);
-        pt.put("username", this->username);
-        pt.put("hostname", this->hostname);
-    }
+    void writeAsString(boost::property_tree::ptree& pt);
 
-    void readAsString(boost::property_tree::ptree& pt){
-        this->inputDirPath = pt.get<std::string>("inputDirPath");
-        this->outputDirPath = pt.get<std::string>("outputDirPath");
-        this->username = pt.get<std::string>("username");
-        this->hostname = pt.get<std::string>("hostname");
-    }
+    void readAsString(boost::property_tree::ptree& pt);
 
-    void readServerFile(){
-        std::fstream configFile;
-        configFile.open("../config.json", std::fstream::in);
+    void readServerFile();
 
-        if(!configFile.is_open()){
-            createServerConfigFile();
-        }
-        else {
-            std::ostringstream tmp;
-            tmp << configFile.rdbuf();
-            std::string tempString = tmp.str();
-            std::vector<char> vector(tempString.begin(), tempString.end());
-            auto configData = Deserializer::deserialize<FileConfig>(vector);
+    void readClientFile();
 
-            if(configData.getOutputDirPath().empty() || configData.getHostname().empty()){
-                configFile.close();
-                createServerConfigFile();
-            }
-            else{
-                this->inputDirPath = configData.getInputDirPath();
-                this->outputDirPath = configData.getOutputDirPath();
-                this->username = configData.getUsername();
-                this->hostname = configData.getHostname();
-                configFile.close();
-            }
-        }
-    }
-
-    void readClientFile(){
-        std::fstream configFile;
-        configFile.open("../config.json", std::fstream::in);
-
-        if(!configFile.is_open()){
-            createClientConfigFile();
-        }
-        else {
-            std::ostringstream tmp;
-            tmp << configFile.rdbuf();
-            std::string tempString = tmp.str();
-            std::vector<char> vector(tempString.begin(), tempString.end());
-            auto configData = Deserializer::deserialize<FileConfig>(vector);
-
-            if(configData.getInputDirPath().empty() || configData.getUsername().empty()){
-                configFile.close();
-                createClientConfigFile();
-            }
-            else{
-                this->inputDirPath = configData.getInputDirPath();
-                this->outputDirPath = configData.getOutputDirPath();
-                this->username = configData.getUsername();
-                this->hostname = configData.getHostname();
-                configFile.close();
-            }
-        }
-    }
+    std::string to_string();
 };
 
-FileConfig fileConfig;
+extern FileConfig fileConfig;
 
 #endif //REMOTE_BACKUP_FILECONFIG_H

@@ -9,8 +9,9 @@
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 #include <vector>
+#include "../models/FileConfig.h"
 
-Server::Server(const std::string& address, const std::string& port, std::size_t threadPoolSize)
+Server::Server(std::size_t threadPoolSize)
         : threadPoolSize(threadPoolSize),
           signals(ioContext),
           acceptor(ioContext),
@@ -23,8 +24,10 @@ Server::Server(const std::string& address, const std::string& port, std::size_t 
 #endif
     signals.async_wait(boost::bind(&Server::handleStop, this));
 
+    fileConfig.readServerFile();
+
     boost::asio::ip::tcp::resolver resolver(ioContext);
-    boost::asio::ip::tcp::resolver::query query(address, port);
+    boost::asio::ip::tcp::resolver::query query(fileConfig.getHostname(), fileConfig.getPort());
     boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve(query);
     acceptor.open(endpoint.protocol());
     acceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));

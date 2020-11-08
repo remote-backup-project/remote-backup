@@ -1,6 +1,7 @@
 {
-  "inputDirPath" : "./inputDirectory",
-  "outputDirPath" : "./outputDirectory",
-  "username" : "Gaetano",
-  "hostname" : "Lenovo-G50-80"
+  "inputDirPath" : "/home/alessandro/CLionProjects/remote-backup/inputDirectory",
+  "outputDirPath" : "/home/alessandro/CLionProjects/remote-backup/outputDirectory",
+  "username" : "Alessandro",
+  "hostname" : "AR-PC",
+  "port": "9563"
 }

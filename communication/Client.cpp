@@ -10,18 +10,19 @@
 #include "../utils/Logger.h"
 #include "../utils/Constants.h"
 #include "../utils/StringUtils.h"
+#include "../models/FileConfig.h"
 
 using boost::asio::ip::tcp;
 namespace fs = std::filesystem;
 namespace asio = boost::asio;
 
 
-Client::Client(std::string  server, std::string port):
-        server(std::move(server)),
-        port(std::move(port)),
-        clientConnectionPtr()
+Client::Client(): clientConnectionPtr()
 {
-    sendDirectory("/home/alessandro/CLionProjects/remote-backup/inputDirectory");
+    fileConfig.readClientFile();
+    server = fileConfig.getHostname();
+    port = fileConfig.getPort();
+    sendDirectory(fileConfig.getInputDirPath());
 }
 
 void Client::run(){
