@@ -15,11 +15,10 @@
 #include "../converters/Deserializer.h"
 #include "../converters/Serializer.h"
 #include "../utils/Constants.h"
-#include "../models/FileChunk.h"
-#include "../models/StringWrapper.h"
+#include "../models/FileInfo.h"
+#include "../models/Command.h"
 #include "../exceptions/FileException.h"
-#include "ServerConnection.h"
-#include <boost/thread/thread.hpp>
+#include "../models/FileConfig.h"
 
 namespace fs = std::filesystem;
 namespace asio = boost::asio;
@@ -158,31 +157,12 @@ public:
         finishSending();
     }
 
-    void doLogin(){
+    void doLogin(FileConfig fileConfig){
         LOG.info("Socket.doLogin");
         try{
-            std::fstream clientFile;
-            clientFile.open("../clientCredentials.txt");
-            if(!clientFile.is_open())
-                throw FileException("Error opening client credentials file"); //TODO fare inserire credenziali e creare file
-            else {
-                std::string temp; //TODO aprire json che ritorna oggetto parsificato
-                std::getline(clientFile, temp);
-                std::string userName(temp);
-                LOG.info("Socket.doLogin - User = " + temp);
-
-                std::getline(clientFile, temp);
-                std::string inputPath(temp);
-                LOG.info("Socket.doLogin - Path = " + temp);
-
-                StringWrapper sentItem(userName + "\n" + inputPath); //TODO usare classe Command
-                sendData(sentItem);
-                sendDirectory(inputPath);
-            }
-            clientFile.close();
-        }
-        catch(FileException& exception){
-            LOG.error(exception.getMessage());
+            Command sentItem(100, fileConfig.getUsername() + "\n" + fileConfig.getInputDirPath());
+            sendData(sentItem);
+            sendDirectory(fileConfig.getInputDirPath());
         }
         catch(std::exception& exception){
             LOG.error(exception.what());

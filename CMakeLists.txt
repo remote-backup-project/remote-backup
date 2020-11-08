@@ -10,10 +10,6 @@ INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 link_directories(${Boost_LIBRARY_DIR})
 
-add_executable(start_server start_server.cpp utils/Logger.cpp models/Serializable.cpp communication/ServerConnection.cpp models/FileChunk.cpp communication/Server.cpp utils/StringUtils.cpp communication/RequestHandler.cpp models/Request.cpp models/Response.cpp converters/Parser.h)
-add_executable(start_client start_client.cpp utils/Logger.cpp models/Serializable.cpp communication/ClientConnection.cpp models/FileChunk.cpp communication/Client.cpp utils/StringUtils.cpp models/Request.cpp models/Response.cpp models/Header.h converters/Parser.h)
-
-TARGET_LINK_LIBRARIES( start_server LINK_PUBLIC ${Boost_LIBRARIES} -lstdc++fs)
-TARGET_LINK_LIBRARIES( start_client LINK_PUBLIC ${Boost_LIBRARIES} -lstdc++fs)
+add_executable(remote_backup main.cpp communication/Socket.h communication/ServerSocket.h utils/Logger.h models/StringWrapper.h exceptions/FileException.h models/Command.h models/Serializable.h models/FileConfig.h)
 
 

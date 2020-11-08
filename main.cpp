@@ -5,12 +5,13 @@
 #include "utils/Logger.h"
 #include "communication/Socket.h"
 #include "communication/ServerSocket.h"
-
+#include "models/FileConfig.h"
 
 [[noreturn]] void startServer(){
     LOG.info("startServer");
     ServerSocket fileTransferSocket;
     ServerSocket commandSocket;
+    fileConfig.readServerFile();
 
     std::vector<std::thread> threads;
     while(true){
@@ -23,7 +24,7 @@
                 threads.emplace_back([&fileTransferSocket, &commandSocket]()
                  {
                      fileTransferSocket.accept(Constants::Socket::FILE_TRANSFER_PORT);
-                     fileTransferSocket.serverLoginCheck();
+                     fileTransferSocket.serverLoginCheck(fileConfig);
                      fileTransferSocket.close();
                  });
                 commandSocket.sendData(Command(Constants::Socket::START_TRANFER_FILE, "Starting receiving files"));
@@ -38,6 +39,7 @@
 
 void startClient(){
     LOG.info("startClient");
+    fileConfig.readClientFile();
 
     for(int i=0; i< 3; i++){
         // commandSocket creation
@@ -53,8 +55,8 @@ void startClient(){
             case Constants::Socket::START_TRANFER_FILE:
                 threads.emplace_back([&fileTransferSocket]()
                  {
-                     fileTransferSocket.connect(Constants::Socket::SERVER_HOSTNAME, Constants::Socket::FILE_TRANSFER_PORT);
-                     fileTransferSocket.doLogin();
+                     fileTransferSocket.connect(Constants::Socket::LOCAL_NETWORK, Constants::Socket::FILE_TRANSFER_PORT);
+                     fileTransferSocket.doLogin(fileConfig);
                  });
                 break;
             default:
