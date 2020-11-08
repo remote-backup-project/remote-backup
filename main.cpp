@@ -20,10 +20,7 @@
         LOG.info("startServer - command = " + command.to_string());
         switch(command.getCode()){
             case Constants::Socket::START_TRANFER_FILE:
-                for(auto &t : threads){
-                    if(t.joinable()) t.join();
-                }
-                threads.emplace_back([&fileTransferSocket]()
+                threads.emplace_back([&fileTransferSocket, &commandSocket]()
                  {
                      fileTransferSocket.accept(Constants::Socket::FILE_TRANSFER_PORT);
                      fileTransferSocket.serverLoginCheck();
@@ -45,7 +42,7 @@ void startClient(){
     for(int i=0; i< 3; i++){
         // commandSocket creation
         Socket commandSocket;
-        commandSocket.connect(Constants::Socket::LOCAL_NETWORK, Constants::Socket::COMMAND_PORT);
+        commandSocket.connect(Constants::Socket::SERVER_HOSTNAME, Constants::Socket::COMMAND_PORT);
         commandSocket.sendData(Command(Constants::Socket::START_TRANFER_FILE, "Starting sending files"));
         auto response = commandSocket.receiveData<Command>();
         LOG.info("startClient - command = " + response.to_string());
@@ -56,7 +53,7 @@ void startClient(){
             case Constants::Socket::START_TRANFER_FILE:
                 threads.emplace_back([&fileTransferSocket]()
                  {
-                     fileTransferSocket.connect(Constants::Socket::LOCAL_NETWORK, Constants::Socket::FILE_TRANSFER_PORT);
+                     fileTransferSocket.connect(Constants::Socket::SERVER_HOSTNAME, Constants::Socket::FILE_TRANSFER_PORT);
                      fileTransferSocket.doLogin();
                  });
                 break;

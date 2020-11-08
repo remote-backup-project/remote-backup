@@ -1,0 +1,81 @@
+//
+// Created by alessandro on 02/11/20.
+//
+
+#include "Response.h"
+
+namespace stock_replies {
+
+    const char ok[] = "OK";
+    const char bad_request[] = "BAD REQUEST";
+    const char unauthorized[] = "UNAUTHORIZED";
+    const char forbidden[] = "FORBIDDEN";
+    const char not_found[] = "NOT FOUND";
+    const char internal_server_error[] = "INTERNAL SERVER ERROR";
+
+    std::string to_string(Response::StatusType status)
+    {
+        switch (status)
+        {
+            case Response::ok:
+                return ok;
+            case Response::bad_request:
+                return bad_request;
+            case Response::unauthorized:
+                return unauthorized;
+            case Response::forbidden:
+                return forbidden;
+            case Response::not_found:
+                return not_found;
+            case Response::internal_server_error:
+                return internal_server_error;
+            default:
+                return internal_server_error;
+        }
+    }
+
+}
+
+Response Response::stockResponse(Response::StatusType status)
+{
+    Response response;
+    response.status = status;
+    response.content = stock_replies::to_string(status);
+    return response;
+}
+
+std::string Response::to_string(){
+    auto string = Serializer::serialize(*this);
+    return std::string(string.begin(), string.end());
+}
+
+std::vector<Header> Response::getHeaders(){ return headers; }
+
+void Response::addHeader(Header& header) { headers.push_back(header); }
+
+std::string Response::getContent(){ return content; }
+
+void Response::appendContent(const char* buf, size_t size) { content.append(buf, size); }
+
+std::string Response::getResponseString(){ return responseString; }
+
+void Response::writeAsString(boost::property_tree::ptree& pt)
+{
+    pt.put("content", this->content);
+    pt.put("status", static_cast<int>(this->status));
+    pt.put("headers", Serializer::serializeVector(headers));
+}
+
+void Response::readAsString(boost::property_tree::ptree& pt)
+{
+    this->content = pt.get<std::string>("content");
+    this->status = static_cast<StatusType>(pt.get<int>("status"));
+    auto headersString = pt.get<std::string>("headers");
+    this->headers = Deserializer::deserializeVector<Header>(headersString);
+}
+
+void Response::append(std::string string) { responseString.append(string); }
+
+std::string Response::get() { return responseString; }
+
+void Response::clear() { responseString.clear(); }

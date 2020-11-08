@@ -9,8 +9,10 @@
 #include "Serializable.h"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include "../converters/Serializer.h"
 
-class StringWrapper : Serializable{
+//TODO da levare
+class StringWrapper : public Serializable{
     std::string content;
 public:
     StringWrapper() {}
@@ -18,11 +20,16 @@ public:
 
     std::string getContent() { return content; }
 
-    void writeAsString(boost::property_tree::ptree& pt){
+    void writeAsString(boost::property_tree::ptree& pt) override{
         pt.put("content", this->content);
     }
-    void readAsString(boost::property_tree::ptree& pt){
+    void readAsString(boost::property_tree::ptree& pt) override{
         this->content = pt.get<std::string>("content");
+    }
+
+    std::string to_string(){
+        auto string = Serializer::serialize(*this);
+        return std::string(string.begin(), string.end());
     }
 };
 

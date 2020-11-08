@@ -13,10 +13,11 @@ public:
         static const int CHILD = 0;
         static const int READ = 0;
         static const int WRITE = 1;
-        static const int MAX_BYTE = 1024;
+        static const int MAX_BYTE = 10000;
     };
     class Socket{
     public:
+        static constexpr const char* SERVER_HOSTNAME = "AR-PC"; // TODO da levare quando verrà preso da file di config
         static const int COMMAND_PORT = 9563;
         static const int FILE_TRANSFER_PORT = 9999;
         static constexpr const char* LOCAL_NETWORK = "0.0.0.0";

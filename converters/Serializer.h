@@ -31,6 +31,18 @@ public:
         return result;
     }
 
+    template<typename T, typename std::enable_if<std::is_base_of<Serializable, T>::value>::type* = nullptr>
+    static std::string serializeVector(std::vector<T> vector){
+        std::string s("[");
+        for(T el : vector){
+            auto serialized = serialize(el);
+            std::string serializedString(serialized.begin(), serialized.end());
+            s.append(serializedString);
+        }
+        s.append("]");
+        return s;
+    }
+
 };
 
 

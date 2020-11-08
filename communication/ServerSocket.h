@@ -13,6 +13,7 @@
 #include <algorithm>
 #include "../utils/Logger.h"
 
+//TODO da levare ma da prendere logica login e modificarla
 class ServerSocket : public Socket{
     asio::ip::tcp::acceptor::endpoint_type end_type;
 public:
@@ -50,30 +51,30 @@ public:
         try{
             std::ofstream ofs3;
             while(true){
-                auto fileInfo = receiveData<FileInfo>();
+                auto fileChunk = receiveData<FileChunk>();
 
                 // serve per bloccare la lettura da pipe/socket
-                if(fileInfo.end()){
+                if(fileChunk.end()){
                     LOG.info("ServerSocket.receiveDirectory - finishReceiving");
                     return;
                 }
 
-                if(fileInfo.isDirectory()){
-                    fs::path path(outputDir + fileInfo.getRelativePath());
+                if(fileChunk.isDirectory()){
+                    fs::path path(outputDir + fileChunk.getRelativePath());
                     LOG.info("ServerSocket.receiveDirectory - directory = " + path.string());
 
                     if(!fs::exists(path))
                         fs::create_directory(path);
                 }else{
                     if(!ofs3.is_open()){
-                        ofs3 = std::ofstream(outputDir + fileInfo.getRelativePath(), std::ios::out | std::ios::binary);
-                        LOG.info("ServerSocket.receiveDirectory - file = " + outputDir + fileInfo.getRelativePath());
+                        ofs3 = std::ofstream(outputDir + fileChunk.getRelativePath(), std::ios::out | std::ios::binary);
+                        LOG.info("ServerSocket.receiveDirectory - file = " + outputDir + fileChunk.getRelativePath());
                         if(!ofs3.is_open())
                             throw FileException("ServerSocket.receiveDirectory - Cannot open/create received file on server");
                     }
 
-                    ofs3.write(fileInfo.getContent().data(), fileInfo.getContent().size()*sizeof(char));
-                    if(fileInfo.getContent().size() < Constants::Pipe::MAX_BYTE)
+                    ofs3.write(fileChunk.getContent().data(), fileChunk.getContent().size()*sizeof(char));
+                    if(fileChunk.getContent().size() < Constants::Pipe::MAX_BYTE)
                         ofs3.close();
                 }
             }

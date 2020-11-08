@@ -15,25 +15,30 @@
 #include "../converters/Deserializer.h"
 #include "../converters/Serializer.h"
 #include "../utils/Constants.h"
-#include "../models/FileInfo.h"
+#include "../models/FileChunk.h"
 #include "../models/StringWrapper.h"
 #include "../exceptions/FileException.h"
+#include "ServerConnection.h"
+#include <boost/thread/thread.hpp>
 
 namespace fs = std::filesystem;
 namespace asio = boost::asio;
 
+//TODO da levare
 class Socket {
     asio::io_service io_service;
-    asio::ip::tcp::socket socket;
+    RequestHandler requestHandler;
+    ConnectionPtr connectionPtr;
     Socket(const Socket&) = delete;
     Socket& operator = (const Socket&) = delete;
-    Socket(asio::io_service& io_service) : socket(io_service) {
+    Socket(asio::io_service& io_service) : socket(io_service),requestHandler(".") {
         LOG.info("Socket - socket created");
     }
     friend class ServerSocket;
 
 public:
-    Socket() : socket(io_service){}
+    asio::ip::tcp::socket socket;
+    Socket() : socket(io_service), requestHandler("."){}
     ~Socket() {
         socket.close();
     }
@@ -42,19 +47,20 @@ public:
         socket.close();
     }
 
-    void connect(std::string ip_address, int port) {
-        LOG.info("Socket.connect - connecting to ip = " + ip_address + ", port = " + std::to_string(port));
+    void connect(std::string hostname, int port) {
+        LOG.info("Socket.connect - connecting to hostname = " + hostname + ", port = " + std::to_string(port));
         asio::ip::tcp::resolver resolver(io_service);
-        asio::ip::tcp::resolver::results_type results = resolver.resolve("AR-PC", std::to_string(port));
-        for(asio::ip::tcp::endpoint const& endpoint : results)
-        {
-            std::cout << endpoint << "\n";
+        while(true){
+            asio::ip::tcp::endpoint endpoint = *resolver.resolve(asio::ip::tcp::resolver::query(hostname, std::to_string(port)));
+            LOG.info("Socket.connect - hostname = " + hostname + " resolved into ip = " + endpoint.address().to_string());
             try{
                 socket.connect(endpoint);
+                connectionPtr.reset(new Connection(io_service, requestHandler));
+                return;
             }
             catch(std::exception& exception){
-                LOG.error(exception.what());
-                exit(-1); //TODO considerare che connect non è bloccante e quindi va rifatta ogni x tempo
+                LOG.warning("Socket.connect - " + std::string(exception.what()) + ", retrying in 5 seconds");
+                boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
             }
         }
     }
@@ -113,8 +119,8 @@ public:
                 ifs.read(data.data(), Constants::Pipe::MAX_BYTE);
                 std::streamsize s = ((ifs)? Constants::Pipe::MAX_BYTE : ifs.gcount());
                 data[s] = 0;
-                FileInfo fileInfo(std::string(data.data(), s), filePath, StringUtils::getStringDifference(filePath, basePath));
-                sendData(fileInfo);
+                FileChunk fileChunk(std::string(data.data(), s), filePath, StringUtils::getStringDifference(filePath, basePath));
+                sendData(fileChunk);
 
                 if(!ifs)
                     break;
@@ -131,14 +137,14 @@ public:
 
     void finishSending(){
         LOG.info("Socket.finishSending");
-        sendData(FileInfo());
+        sendData(FileChunk());
     }
 
     void createRemoteDirectory(const std::string& basePath, const std::string& directoryPath){
         LOG.info("Socket.createRemoteDirectory - directoryPath = " + directoryPath);
         std::string relativePath = StringUtils::getStringDifference(directoryPath, basePath);
-        FileInfo fileInfo("", directoryPath, relativePath);
-        sendData(fileInfo);
+        FileChunk fileChunk("", directoryPath, relativePath);
+        sendData(fileChunk);
     }
 
     void sendDirectory(const std::string& directory){

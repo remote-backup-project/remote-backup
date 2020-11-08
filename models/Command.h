@@ -11,8 +11,10 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include "Serializable.h"
+#include "../converters/Serializer.h"
 
-class Command: Serializable{
+//TODO da levare
+class Command: public Serializable{
     int code;
     std::string message;
 public:
@@ -23,17 +25,17 @@ public:
     int getCode(){return code;}
     std::string getMessage(){return message;}
 
-    void writeAsString(boost::property_tree::ptree& pt){
+    void writeAsString(boost::property_tree::ptree& pt) override {
         pt.put("code", this->code);
         pt.put("message", this->message);
     }
 
-    void readAsString(boost::property_tree::ptree& pt){
+    void readAsString(boost::property_tree::ptree& pt) override {
         this->code = pt.get<int>("code");
         this->message = pt.get<std::string>("message");
     }
 
-    std::string to_string(){
+    std::string to_string() override {
         auto string = Serializer::serialize(*this);
         return std::string(string.begin(), string.end());
     }
