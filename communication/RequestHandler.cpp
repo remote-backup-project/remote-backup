@@ -10,7 +10,10 @@
 #include <string>
 #include <filesystem>
 #include "../models/FileConfig.h"
-
+#include <boost/iostreams/device/mapped_file.hpp>
+#include "../models/FileChunk.h"
+#include <boost/thread/thread.hpp>
+#include "../models/FileWriter.h"
 
 namespace fs = std::filesystem;
 namespace asio = boost::asio;
@@ -26,7 +29,11 @@ void RequestHandler::handleRequest(Request& request, Response& response)
     if(!authenticateClient(request, response))
         return;
 
-    if(boost::equals(request.getUri(), Services::TRANSFER_DIRECTORY))
+    if(boost::equals(request.getUri(), Services::CHECKSUM_FILE))
+    {
+        checksumFile(request, response);
+    }
+    else if(boost::equals(request.getUri(), Services::TRANSFER_DIRECTORY))
     {
         transferDirectory(request, response);
     }
@@ -46,7 +53,7 @@ void RequestHandler::transferDirectory(Request& request, Response& response)
     auto fileChunk = Deserializer::deserialize<FileChunk>(request.getBody());
     if(fileChunk.isDirectory())
     {
-        LOG.info("RequestHandler::handleRequest - Directory = " + fileChunk.getRelativePath() + " - Chunk = " +
+        LOG.debug("RequestHandler::handleRequest - Directory = " + fileChunk.getRelativePath() + " - Chunk = " +
                  std::to_string(fileChunk.getChunkNumber()));
         try
         {
@@ -74,27 +81,15 @@ void RequestHandler::transferDirectory(Request& request, Response& response)
 void RequestHandler::transferFile(Request &request, Response &response)
 {
     auto fileChunk = Deserializer::deserialize<FileChunk>(request.getBody());
+
     if(!fileChunk.isDirectory())
     {
-        LOG.info("RequestHandler::handleRequest - File = " + fileChunk.getRelativePath() + " - Chunk = " +
+        LOG.debug("RequestHandler::handleRequest - File = " + fileChunk.getRelativePath() + " - Chunk = " +
                  std::to_string(fileChunk.getChunkNumber()));
 
         try
         {
-            std::ofstream ofs3;
-            if(fileChunk.getChunkNumber() == 1)
-            {
-                ofs3 = std::ofstream(outputDirPath + fileChunk.getRelativePath(), std::ios::out | std::ios::binary);
-            }
-            else
-            {
-                ofs3 = std::ofstream(outputDirPath + fileChunk.getRelativePath(), std::ios::out | std::ios::binary | std::ios::app);
-            }
-
-            if(!ofs3.is_open())
-                LOG.error("ServerSocket.receiveDirectory - Cannot open/create received file on server");
-
-            ofs3.write(fileChunk.getContent().data(), fileChunk.getContent().size()*sizeof(char));
+            fileWriter.write(outputDirPath + fileChunk.getRelativePath(), fileChunk);
 
             response = Response::stockResponse(StockResponse::ok);
             LOG.info("RequestHandler::handleRequest - Response = < " + std::to_string(response.status) + " >");
@@ -113,7 +108,7 @@ void RequestHandler::transferFile(Request &request, Response &response)
 }
 
 bool RequestHandler::authenticateClient(Request& request, Response& response){
-    LOG.info("RequestHandler::authenticateClient");
+    LOG.debug("RequestHandler::authenticateClient");
     try
     {
         auto headers = request.getHeaders();
@@ -149,7 +144,7 @@ bool RequestHandler::authenticateClient(Request& request, Response& response){
         else
         {
             /* credentials not present */
-            LOG.info("RequestHandler::authenticateClient - Client NOT found -> creation of client folder");
+            LOG.debug("RequestHandler::authenticateClient - Client NOT found -> creation of client folder");
             fs::create_directory(outputDirPath);
         }
         return true;
@@ -161,3 +156,54 @@ bool RequestHandler::authenticateClient(Request& request, Response& response){
     }
     return false;
 }
+
+void RequestHandler::createDirectories(const std::string& realativePath)
+{
+    auto directories = StringUtils::split(realativePath, "/");
+    std::string newPath(outputDirPath);
+
+    for(int i = 1; i < static_cast<int>(directories.size()) - 1; i++){ // il primo è stringa vuota, l'ultimo è il file
+        newPath += "/" + directories[i];
+
+        if (!fs::exists(newPath))
+            fs::create_directory(newPath);
+    }
+}
+
+void RequestHandler::checksumFile(Request& request, Response& response)
+{
+    auto fileChunk = Deserializer::deserialize<FileChunk>(request.getBody());
+    LOG.debug("RequestHandler::checksumFile - File = " + fileChunk.getRelativePath());
+
+    try
+    {
+        if(!fileChunk.isDirectory() && fileChunk.getChunkNumber() == 0)
+        {
+            std::string md5File = fs::exists(outputDirPath + fileChunk.getRelativePath()) ?
+                    StringUtils::md5FromFile(outputDirPath + fileChunk.getRelativePath()).first : "";
+            if(boost::equals(md5File, fileChunk.getContent()))
+            {
+                response = Response::stockResponse(StockResponse::ok);
+                LOG.info("RequestHandler::checksumFile - Response = < " + std::to_string(response.status) + " - File < " + fileChunk.getRelativePath() + " > already exists >");
+            }
+            else
+            {
+                response = Response::stockResponse(StockResponse::continue_);
+                if(md5File.empty())
+                    fs::remove(outputDirPath + fileChunk.getRelativePath());
+                LOG.trace("RequestHandler::checksumFile - Response = < " + std::to_string(response.status) + " - File < " + fileChunk.getRelativePath() + " > doesn't exists or has changed >");
+            }
+        }
+        else
+        {
+            response = Response::stockResponse(StockResponse::bad_request);
+            LOG.error("RequestHandler::checksumFile - Response = < " + std::to_string(response.status) + " - Not a File >");
+        }
+    }
+    catch(std::exception& e)
+    {
+        response = Response::stockResponse(StockResponse::internal_server_error);
+        LOG.error("RequestHandler::checksumFile - Response = < " + std::to_string(response.status) + " - " + e.what() + " >");
+    }
+}
+

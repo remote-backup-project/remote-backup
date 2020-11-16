@@ -34,6 +34,7 @@ Server::Server(std::size_t threadPoolSize)
     acceptor.bind(endpoint);
     acceptor.listen();
 
+    LOG.info("Server::Server - Server < " + endpoint.address().to_string() +  " > started successfully on port < " + std::to_string(endpoint.port()) + " >");
     startAccept();
 }
 
@@ -53,7 +54,7 @@ void Server::run()
 
 void Server::startAccept()
 {
-    LOG.info("Server::startAccept");
+    LOG.debug("Server::startAccept");
     newConnection.reset(new ServerConnection(ioContext));
     acceptor.async_accept(newConnection->getSocket(),
                            boost::bind(&Server::handleAccept,
@@ -63,7 +64,7 @@ void Server::startAccept()
 
 void Server::handleAccept(const boost::system::error_code& e)
 {
-    LOG.info("Server::handleAccept");
+    LOG.debug("Server::handleAccept");
     if (!e)
     {
         newConnection->start();
@@ -79,4 +80,5 @@ void Server::handleAccept(const boost::system::error_code& e)
 void Server::handleStop()
 {
     ioContext.stop();
+    LOG.info("Server::handleStop - Server stopped");
 }

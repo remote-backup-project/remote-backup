@@ -8,7 +8,7 @@
 #include <string>
 
 namespace Socket{
-    const int CHUNK_DIMENSION = 5000;
+    const int CHUNK_SIZE = 5000;
 };
 
 namespace Config{
@@ -22,10 +22,12 @@ namespace Config{
 namespace Services{
     const char TRANSFER_FILE[] = "/transfer/file";
     const char TRANSFER_DIRECTORY[] = "/transfer/directory";
+    const char CHECKSUM_FILE[] = "/checksum";
 }
 
 namespace StockResponse {
 
+    const char CONTINUE[] = "CONTINUE";
     const char OK[] = "OK";
     const char BAD_REQUEST[] = "BAD REQUEST";
     const char UNAUTHORIZED[] = "UNAUTHORIZED";
@@ -35,6 +37,7 @@ namespace StockResponse {
 
     enum StatusType
     {
+        continue_ = 100,
         ok = 200,
         bad_request = 400,
         unauthorized = 401,

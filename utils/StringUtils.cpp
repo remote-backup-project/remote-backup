@@ -4,8 +4,13 @@
 
 #include "StringUtils.h"
 #include <search.h>
+#include <openssl/md5.h>
+#include <iomanip>
+#include <sstream>
+#include <boost/iostreams/device/mapped_file.hpp>
 #include <boost/algorithm/string.hpp>
-
+#include <fstream>
+#include "Logger.h"
 
 std::string StringUtils::encodeBase64(const std::string& data) {
     static constexpr char sEncodingTable[] = {
@@ -125,6 +130,8 @@ std::string StringUtils::fillFromStreambuf(boost::asio::streambuf& streambuf){
 std::string StringUtils::response_to_string(StockResponse::StatusType status){
     switch (status)
     {
+        case StockResponse::continue_:
+            return StockResponse::CONTINUE;
         case StockResponse::ok:
             return StockResponse::OK;
         case StockResponse::bad_request:
@@ -142,4 +149,29 @@ std::string StringUtils::response_to_string(StockResponse::StatusType status){
     }
 }
 
+std::pair<std::string, long> StringUtils::md5FromFile(const std::string &path)
+{
+    unsigned char result[MD5_DIGEST_LENGTH];
+    std::ifstream ifs(path, std::ios::in | std::ios::binary);
 
+    MD5_CTX md5;
+    MD5_Init(&md5);
+    std::vector<char> data(Socket::CHUNK_SIZE + 1, 0);
+    while(ifs)
+    {
+        ifs.read(data.data(), Socket::CHUNK_SIZE);
+        std::streamsize s = ifs.gcount();
+        data[s] = 0;
+        MD5_Update(&md5, data.data(), s);
+    }
+    ifs.close();
+    MD5_Final(result, &md5);
+
+    std::ostringstream sout;
+    sout << std::hex << std::setfill('0');
+
+    for(int c : result)
+        sout << std::setw(2) << (int)c;
+
+    return std::make_pair(sout.str(), ifs.tellg().operator long());
+}

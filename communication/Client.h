@@ -21,13 +21,15 @@ private:
 
     boost::asio::io_context ioContext;
 
-    void sendFile(const std::string& basePath, const std::string& filePath);
+    void sendHashFile(const std::string& filePath);
 
-    void createRemoteDirectory(const std::string& basePath, const std::string& directoryPath);
+    void createRemoteDirectory(const std::string& directoryPath);
 
-    void sendDirectory(const std::string& directory);
+    void sendDirectory();
 
-    void sendData(std::string uri, std::string body);
+    static void sendContentFile(void* client, std::string filePath);
+
+    static void sendRequest(void* client, std::string uri, std::string body, void (* onResponse)(void*, std::string));
 };
 
 #endif //REMOTE_BACKUP_CLIENT_H

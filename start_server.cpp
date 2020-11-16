@@ -14,7 +14,7 @@ int main() {
     }
     catch (std::exception& e)
     {
-        LOG.error("main - Server - Error < " + std::string(e.what()) + " >");
+        LOG.fatal("main - Server - Error < " + std::string(e.what()) + " >");
         return 1;
     }
 

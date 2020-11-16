@@ -27,10 +27,15 @@ class ClientConnection
 public:
     explicit ClientConnection(boost::asio::io_context& ioContext);
 
-
     void start();
 
     void setRequest(Request request);
+
+    void setCallback(void*, void (* onResponse)(void*, std::string));
+
+    boost::asio::ip::tcp::socket& getSocket();
+
+    void restart();
 
 private:
 
@@ -56,6 +61,10 @@ private:
 
     Parser parser;
 
+    void (* onResponse)(void*, std::string);
+
+    void * context;
+
     void handleResolve(const boost::system::error_code& err);
 
     void handleConnect(const boost::system::error_code& err);
@@ -64,7 +73,7 @@ private:
 
     void handleRead(const boost::system::error_code& err, std::size_t bytes_transferred);
 
-    void restart();
+    void handleResponse();
 };
 
 typedef boost::shared_ptr<ClientConnection> ClientConnectionPtr;

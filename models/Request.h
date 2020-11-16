@@ -6,6 +6,7 @@
 #define REMOTE_BACKUP_REQUEST_H
 
 #include <string>
+#include <utility>
 #include <vector>
 #include "Header.h"
 #include "Serializable.h"
@@ -28,6 +29,9 @@ public:
     std::vector<Header>& getHeaders();
     void addHeader(Header header);
     std::string getBody();
+
+    void setBody(std::string body);
+    void setUri(std::string uri);
 
     void writeAsString(boost::property_tree::ptree& pt) override;
 

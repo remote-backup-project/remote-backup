@@ -48,6 +48,10 @@ void Request::clear(){ requestString.clear(); }
 
 std::string Request::get(){ return requestString; }
 
+void Request::setBody(std::string body){ this->body = std::move(body); }
+
+void Request::setUri(std::string uri){ this->uri = std::move(uri); }
+
 std::string Request::to_string(){
     auto string = Serializer::serialize(*this);
     return std::string(string.begin(), string.end());

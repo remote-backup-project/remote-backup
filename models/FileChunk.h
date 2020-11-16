@@ -12,22 +12,27 @@
 #include <boost/property_tree/json_parser.hpp>
 
 class FileChunk : public Serializable{
-    static std::map<std::string, int> chunkNumberMap;
-    int chunkNumber;
+    static std::map<std::string, long> chunkNumberMap;
+    long chunkNumber;
     std::string content;
     std::string path;
     std::string fileName;
     std::string relativePath;
+    bool isFile;
 
 public:
     FileChunk();
+    FileChunk(std::string path, std::string relativePath);
     FileChunk(std::string content, std::string path, std::string relativePath);
+    FileChunk(long chunkNumber, std::string content, std::string path, std::string relativePath);
 
     std::string getContent();
     std::string getPath();
     std::string getFilename();
     std::string getRelativePath();
-    int getChunkNumber();
+    long getChunkNumber();
+
+    void setContent(std::string content);
 
     bool end();
 

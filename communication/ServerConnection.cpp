@@ -7,6 +7,7 @@
 #include <iostream>
 #include <boost/thread/thread.hpp>
 #include "../utils/Logger.h"
+#include "../models/FileChunk.h"
 #include <boost/asio.hpp>
 #include <boost/bind/bind.hpp>
 #include <boost/chrono.hpp>
@@ -15,8 +16,7 @@
 ServerConnection::ServerConnection(boost::asio::io_context& ioContext)
         : strand(ioContext),
           socket(ioContext)
-{
-}
+{}
 
 boost::asio::ip::tcp::socket& ServerConnection::getSocket()
 {
@@ -25,7 +25,7 @@ boost::asio::ip::tcp::socket& ServerConnection::getSocket()
 
 void ServerConnection::start()
 {
-    LOG.info("ServerConnection::start");
+    LOG.debug("ServerConnection::start");
     socket.async_read_some(boost::asio::buffer(array),
                             strand.wrap(
                                     boost::bind(&ServerConnection::handleRead,
@@ -36,13 +36,16 @@ void ServerConnection::start()
 
 void ServerConnection::handleRead(const boost::system::error_code& e, std::size_t bytes_transferred)
 {
-    LOG.info("ServerConnection::handleRead");
+    LOG.debug("ServerConnection::handleRead");
     if (!e)
     {
         boost::tribool result;
         boost::tie(result, boost::tuples::ignore) = parser.parse<Request>(request, std::string(array.data(), bytes_transferred));
         if (result)
         {
+            auto fileChunk = Deserializer::deserialize<FileChunk>(request.getBody());
+            if(fileChunk.getChunkNumber() == 2)
+                boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
             requestHandler.handleRequest(request, response);
             StringUtils::fillStreambuf(buffer, response.to_string());
             boost::asio::async_write(socket, buffer,
@@ -54,7 +57,7 @@ void ServerConnection::handleRead(const boost::system::error_code& e, std::size_
         else if (!result)
         {
             response = Response::stockResponse(StockResponse::bad_request);
-            LOG.error("ServerConnection::handleRead - Response = < " + std::to_string(response.status) + " - Wrong request format  >");
+            LOG.error("ServerConnection::handleRead - Response = < " + std::to_string(response.status) + " - Wrong request format >");
             StringUtils::fillStreambuf(buffer, response.to_string());
             boost::asio::async_write(socket, buffer,
                                      strand.wrap(
@@ -64,7 +67,7 @@ void ServerConnection::handleRead(const boost::system::error_code& e, std::size_
         }
         else
         {
-            LOG.warning("ServerConnection::handleRead - Request not finished yet => Reading again");
+            LOG.warning("ServerConnection::handleRead - Request not finished yet => Reading again - Partial Request = " + std::string(array.begin(), array.end()));
             socket.async_read_some(boost::asio::buffer(array),
                                     strand.wrap(
                                             boost::bind(&ServerConnection::handleRead,
@@ -88,7 +91,7 @@ void ServerConnection::handleRead(const boost::system::error_code& e, std::size_
 
 void ServerConnection::handleWrite(const boost::system::error_code& e)
 {
-    LOG.info("ServerConnection::handleWrite");
+    LOG.debug("ServerConnection::handleWrite");
     if (!e)
     {
         boost::system::error_code ignored_ec;

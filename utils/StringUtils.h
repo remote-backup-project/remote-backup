@@ -41,6 +41,8 @@ public:
     static std::string fillFromStreambuf(boost::asio::streambuf& streambuf);
 
     static std::string response_to_string(StockResponse::StatusType status);
+
+    static std::pair<std::string, long> md5FromFile(const std::string& path);
 };
 
 #endif //REMOTE_BACKUP_STRINGUTILS_H

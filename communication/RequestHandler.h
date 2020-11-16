@@ -9,6 +9,8 @@
 #include <boost/noncopyable.hpp>
 #include "../models/Request.h"
 #include "../models/Response.h"
+#include <mutex>
+#include <condition_variable>
 
 class RequestHandler: private boost::noncopyable
 {
@@ -25,6 +27,10 @@ private:
     void transferFile(Request& request, Response& response);
 
     bool authenticateClient(Request& request, Response& response);
+
+    void checksumFile(Request& request, Response& response);
+
+    void createDirectories(const std::string& relativePath);
 };
 
 

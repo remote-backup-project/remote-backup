@@ -27,6 +27,8 @@ private:
 
     ConnectionPtr newConnection;
 
+    RequestHandler requestHandler;
+
     void startAccept();
 
     void handleAccept(const boost::system::error_code& e);

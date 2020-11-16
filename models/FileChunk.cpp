@@ -7,28 +7,58 @@
 #include "../utils/StringUtils.h"
 #include <iostream>
 
-std::map<std::string, int> FileChunk::chunkNumberMap = {};
+std::map<std::string, long> FileChunk::chunkNumberMap = {};
 
 FileChunk::FileChunk() {}
+
+FileChunk::FileChunk(std::string path, std::string relativePath):
+        path(std::move(path)),
+        relativePath(std::move(relativePath))
+{
+    isFile = false;
+    chunkNumber = ++chunkNumberMap[this->relativePath];
+}
 
 FileChunk::FileChunk(std::string content, std::string path, std::string relativePath):
     content(std::move(content)),
     path(std::move(path)),
     relativePath(std::move(relativePath))
 {
+    isFile = true;
+
     std::vector<std::string> results = StringUtils::split(this->path, "/");
     if(!results.empty())
         fileName = results[results.size()-1];
 
-    chunkNumber = ++chunkNumberMap[this->relativePath];
+    /**
+     * chunkNumber parte da 0 se:
+     *  - isFile = true
+     *  - content = hash del file
+     * altrimenti => chunkNumber parte da 1
+     */
+    chunkNumber = chunkNumberMap[this->relativePath]++;
 }
+
+FileChunk::FileChunk(long chunkNumber, std::string content, std::string path, std::string relativePath):
+    chunkNumber(chunkNumber),
+    content(std::move(content)),
+    path(std::move(path)),
+    relativePath(std::move(relativePath))
+{
+    isFile = true;
+
+    std::vector<std::string> results = StringUtils::split(this->path, "/");
+    if(!results.empty())
+        fileName = results[results.size()-1];
+}
+
 
 bool FileChunk::end(){
     return this->path.empty();
 }
 
 bool FileChunk::isDirectory(){
-    return !this->path.empty() && this->content.empty();
+    return !isFile;
 }
 
 void FileChunk::writeAsString(boost::property_tree::ptree& pt){
@@ -37,6 +67,7 @@ void FileChunk::writeAsString(boost::property_tree::ptree& pt){
     pt.put("fileName", this->fileName);
     pt.put("relativePath", this->relativePath);
     pt.put("chunkNumber", this->chunkNumber);
+    pt.put("isFile", this->isFile);
 }
 
 void FileChunk::readAsString(boost::property_tree::ptree& pt){
@@ -44,7 +75,8 @@ void FileChunk::readAsString(boost::property_tree::ptree& pt){
     this->path = pt.get<std::string>("path");
     this->fileName = pt.get<std::string>("fileName");
     this->relativePath = pt.get<std::string>("relativePath");
-    this->chunkNumber = pt.get<int>("chunkNumber");
+    this->chunkNumber = pt.get<long>("chunkNumber");
+    this->isFile = pt.get<bool>("isFile");
 }
 
 std::string FileChunk::getContent(){ return content; }
@@ -55,10 +87,13 @@ std::string FileChunk::getFilename() { return fileName; }
 
 std::string FileChunk::getRelativePath() { return relativePath; }
 
-int FileChunk::getChunkNumber(){ return chunkNumber; }
+long FileChunk::getChunkNumber(){ return chunkNumber; }
+
+void FileChunk::setContent(std::string content){ this->content = std::move(content); }
 
 std::string FileChunk::to_string(){
     auto string = Serializer::serialize(*this);
     return std::string(string.begin(), string.end());
 }
+
 

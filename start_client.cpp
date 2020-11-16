@@ -4,6 +4,7 @@
 
 #include "./utils/Logger.h"
 #include "./communication/Client.h"
+#include "./models/FileWriter.h"
 
 int main()
 {
@@ -14,7 +15,7 @@ int main()
     }
     catch (std::exception& e)
     {
-        LOG.error("main - Client - Error < " + std::string(e.what()) + " >");
+        LOG.fatal("main - Client - Error < " + std::string(e.what()) + " >");
         return 1;
     }
 
