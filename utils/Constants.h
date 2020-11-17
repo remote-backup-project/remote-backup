@@ -47,4 +47,12 @@ namespace StockResponse {
     };
 }
 
+namespace FileWatcherStatus {
+    enum class FileStatus {
+        CREATED,
+        MODIFIED,
+        ERASED
+    };
+}
+
 #endif //REMOTE_BACKUP_CONSTANTS_H

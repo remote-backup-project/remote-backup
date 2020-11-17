@@ -11,6 +11,7 @@
 #include "../utils/Constants.h"
 #include "../utils/StringUtils.h"
 #include "../models/FileConfig.h"
+#include "../utils/FileWatcher.h"
 
 using boost::asio::ip::tcp;
 namespace fs = std::filesystem;
@@ -20,7 +21,50 @@ namespace asio = boost::asio;
 Client::Client(): clientConnectionPtr()
 {
     fileConfig.readClientFile();
-    sendDirectory();
+    FileWatcher fileWatcher(fileConfig.getInputDirPath());
+    //TODO opzione 1
+        //TODO se per server la cartella non esiste chiamare send Directory si InputDirPath
+        //TODO se per server già esisteva, affidarsi a fileWatcher
+    //TODO opzione 2
+        //TODO reinviare tutta la cartella a prescindere alla prima connessione e poi affidarsi a fileWatcher
+    fileWatcher.start([&] (std::string news_on_path, FileWatcherStatus::FileStatus status) -> void {
+        // Process only regular files and directories, all other file types are ignored
+        if(!fs::is_regular_file(fs::path(news_on_path)) && !fs::is_directory(fs::path(news_on_path))
+            && status != FileWatcherStatus::FileStatus::ERASED) {
+            return;
+        }
+
+        switch(status) {
+            case FileWatcherStatus::FileStatus::CREATED: {
+                if(fs::is_regular_file(fs::path(news_on_path))){
+                    LOG.debug("CREATED FILE - " + news_on_path);
+                    sendHashFile(news_on_path);
+                }
+                else if(fs::is_directory(fs::path(news_on_path))){
+                    LOG.debug("CREATED DIRECTORY- " + news_on_path);
+                    createRemoteDirectory(news_on_path);
+                }
+                break;
+            }
+            case FileWatcherStatus::FileStatus::MODIFIED: {
+                if(fs::is_regular_file(fs::path(news_on_path))){
+                    LOG.debug("MODIFIED FILE- " + news_on_path);
+                    sendHashFile(news_on_path);
+                }
+                break;
+            }
+            case FileWatcherStatus::FileStatus::ERASED: {
+                LOG.debug("DELETED - " + news_on_path);
+                //TODO funzione per eliminare file/directory con path "news_on_path"
+                break;
+            }
+            default: {
+                LOG.error("Error! Unknown file status.");
+            }
+        }
+    });
+
+    sendDirectory(fileConfig.getInputDirPath());
 }
 
 void Client::run(){
@@ -47,9 +91,9 @@ void Client::createRemoteDirectory(const std::string& directoryPath){
     sendRequest(this, Services::TRANSFER_DIRECTORY, fileChunk.to_string(), [](void*, std::string){});
 }
 
-void Client::sendDirectory(){
+void Client::sendDirectory(const std::string& directoryPath){
     LOG.debug("Client::sendDirectory - directory = " + fileConfig.getInputDirPath());
-    fs::path path(fileConfig.getInputDirPath());
+    fs::path path(directoryPath);
     for(auto &p : fs::recursive_directory_iterator(path)){
         if( !fs::is_directory(p.status()) ){
             sendHashFile(p.path().string());

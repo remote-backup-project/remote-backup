@@ -25,7 +25,7 @@ private:
 
     void createRemoteDirectory(const std::string& directoryPath);
 
-    void sendDirectory();
+    void sendDirectory(const std::string& directoryPath);
 
     static void sendContentFile(void* client, std::string filePath);
 
