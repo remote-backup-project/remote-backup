@@ -22,11 +22,6 @@ Client::Client(): clientConnectionPtr()
 {
     fileConfig.readClientFile();
     FileWatcher fileWatcher(fileConfig.getInputDirPath());
-    //TODO opzione 1
-        //TODO se per server la cartella non esiste chiamare send Directory si InputDirPath
-        //TODO se per server già esisteva, affidarsi a fileWatcher
-    //TODO opzione 2
-        //TODO reinviare tutta la cartella a prescindere alla prima connessione e poi affidarsi a fileWatcher
     fileWatcher.start([&] (std::string news_on_path, FileWatcherStatus::FileStatus status) -> void {
         // Process only regular files and directories, all other file types are ignored
         if(!fs::is_regular_file(fs::path(news_on_path)) && !fs::is_directory(fs::path(news_on_path))
@@ -63,8 +58,6 @@ Client::Client(): clientConnectionPtr()
             }
         }
     });
-
-    sendDirectory(fileConfig.getInputDirPath());
 }
 
 void Client::run(){
