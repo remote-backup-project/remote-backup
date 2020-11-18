@@ -8,6 +8,7 @@
 #include <string>
 #include <boost/asio.hpp>
 #include "ClientConnection.h"
+#include "../models/FileWatcher.h"
 
 class Client{
 public:
@@ -21,15 +22,23 @@ private:
 
     boost::asio::io_context ioContext;
 
+    boost::asio::signal_set signals;
+
+    FileWatcher fileWatcher;
+
     void sendHashFile(const std::string& filePath);
 
     void createRemoteDirectory(const std::string& directoryPath);
 
-    void sendDirectory(const std::string& directoryPath);
+    void sendDirectory();
+
+    void handleStop();
 
     static void sendContentFile(void* client, std::string filePath);
 
     static void sendRequest(void* client, std::string uri, std::string body, void (* onResponse)(void*, std::string));
+
+    void watchFileSystem();
 };
 
 #endif //REMOTE_BACKUP_CLIENT_H

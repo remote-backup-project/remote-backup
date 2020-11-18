@@ -42,7 +42,7 @@ public:
 
     static std::string response_to_string(StockResponse::StatusType status);
 
-    static std::pair<std::string, long> md5FromFile(const std::string& path);
+    static std::string md5FromFile(const std::string& path);
 };
 
 #endif //REMOTE_BACKUP_STRINGUTILS_H

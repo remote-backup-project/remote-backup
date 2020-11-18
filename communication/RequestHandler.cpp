@@ -20,8 +20,6 @@ namespace asio = boost::asio;
 
 RequestHandler::RequestHandler(){}
 
-//TODO da implementare l'arrivo di request in diverso ordine e scrivere file in ordine spostandosi col puntatore al file
-
 void RequestHandler::handleRequest(Request& request, Response& response)
 {
     LOG.info("RequestHandler::handleRequest - Request = " + request.to_string());
@@ -57,7 +55,7 @@ void RequestHandler::transferDirectory(Request& request, Response& response)
     auto fileChunk = Deserializer::deserialize<FileChunk>(request.getBody());
     if(fileChunk.isDirectory())
     {
-        LOG.debug("RequestHandler::handleRequest - Directory = " + fileChunk.getRelativePath() + " - Chunk = " +
+        LOG.debug("RequestHandler::transferDirectory - Directory = " + fileChunk.getRelativePath() + " - Chunk = " +
                  std::to_string(fileChunk.getChunkNumber()));
         try
         {
@@ -67,18 +65,18 @@ void RequestHandler::transferDirectory(Request& request, Response& response)
                 fs::create_directory(path);
 
             response = Response::stockResponse(StockResponse::ok);
-            LOG.info("RequestHandler::handleRequest - Response = < " + std::to_string(response.status) + " >");
+            LOG.info("RequestHandler::transferDirectory - Response = < " + std::to_string(response.status) + " >");
         }
         catch(std::exception& e)
         {
             response = Response::stockResponse(StockResponse::internal_server_error);
-            LOG.error("RequestHandler::handleRequest - Response = < " + std::to_string(response.status) + " - " + e.what() + " >");
+            LOG.error("RequestHandler::transferDirectory - Response = < " + std::to_string(response.status) + " - " + e.what() + " >");
         }
     }
     else
     {
         response = Response::stockResponse(StockResponse::bad_request);
-        LOG.error("RequestHandler::handleRequest - Response = < " + std::to_string(response.status) + " - Not a directory >");
+        LOG.error("RequestHandler::transferDirectory - Response = < " + std::to_string(response.status) + " - Not a directory >");
     }
 }
 
@@ -88,7 +86,7 @@ void RequestHandler::transferFile(Request &request, Response &response)
 
     if(!fileChunk.isDirectory())
     {
-        LOG.debug("RequestHandler::handleRequest - File = " + fileChunk.getRelativePath() + " - Chunk = " +
+        LOG.debug("RequestHandler::transferFile - File = " + fileChunk.getRelativePath() + " - Chunk = " +
                  std::to_string(fileChunk.getChunkNumber()));
 
         try
@@ -96,18 +94,18 @@ void RequestHandler::transferFile(Request &request, Response &response)
             fileWriter.write(outputDirPath + fileChunk.getRelativePath(), fileChunk);
 
             response = Response::stockResponse(StockResponse::ok);
-            LOG.info("RequestHandler::handleRequest - Response = < " + std::to_string(response.status) + " >");
+            LOG.info("RequestHandler::transferFile - Response = < " + std::to_string(response.status) + " >");
         }
         catch(std::exception& e)
         {
             response = Response::stockResponse(StockResponse::internal_server_error);
-            LOG.error("RequestHandler::handleRequest - Response = < " + std::to_string(response.status) + " - " + e.what() + " >");
+            LOG.error("RequestHandler::transferFile - Response = < " + std::to_string(response.status) + " - " + e.what() + " >");
         }
     }
     else
     {
         response = Response::stockResponse(StockResponse::bad_request);
-        LOG.error("RequestHandler::handleRequest - Response = < " + std::to_string(response.status) + " - Not a File >");
+        LOG.error("RequestHandler::transferFile - Response = < " + std::to_string(response.status) + " - Not a File >");
     }
 }
 
@@ -184,7 +182,7 @@ void RequestHandler::checksumFile(Request& request, Response& response)
         if(!fileChunk.isDirectory() && fileChunk.getChunkNumber() == 0)
         {
             std::string md5File = fs::exists(outputDirPath + fileChunk.getRelativePath()) ?
-                    StringUtils::md5FromFile(outputDirPath + fileChunk.getRelativePath()).first : "";
+                    StringUtils::md5FromFile(outputDirPath + fileChunk.getRelativePath()) : "";
             if(boost::equals(md5File, fileChunk.getContent()))
             {
                 response = Response::stockResponse(StockResponse::ok);
@@ -193,7 +191,7 @@ void RequestHandler::checksumFile(Request& request, Response& response)
             else
             {
                 response = Response::stockResponse(StockResponse::continue_);
-                if(md5File.empty())
+                if(!md5File.empty())
                     fs::remove(outputDirPath + fileChunk.getRelativePath());
                 LOG.trace("RequestHandler::checksumFile - Response = < " + std::to_string(response.status) + " - File < " + fileChunk.getRelativePath() + " > doesn't exists or has changed >");
             }
@@ -214,7 +212,7 @@ void RequestHandler::checksumFile(Request& request, Response& response)
 void RequestHandler::deleteResource(Request& request, Response& response){
     auto fileChunk = Deserializer::deserialize<FileChunk>(request.getBody());
 
-    LOG.debug("RequestHandler::handleRequest - Delete Resource = " + fileChunk.getRelativePath() + " - Chunk = " +
+    LOG.debug("RequestHandler::deleteResource - Delete Resource = " + fileChunk.getRelativePath() + " - Chunk = " +
               std::to_string(fileChunk.getChunkNumber()));
     try
     {
@@ -224,24 +222,24 @@ void RequestHandler::deleteResource(Request& request, Response& response){
         {
             fs::remove_all(path); //rimozione ricorsiva della cartella e del suo contenuto
             response = Response::stockResponse(StockResponse::ok);
-            LOG.info("RequestHandler::handleRequest - Response = < " + std::to_string(response.status) + " >");
+            LOG.info("RequestHandler::deleteResource - Response = < " + std::to_string(response.status) + " >");
         }
         else if(fs::exists(path))
         {
             fs::remove(path); //rimozione file
             response = Response::stockResponse(StockResponse::ok);
-            LOG.info("RequestHandler::handleRequest - Response = < " + std::to_string(response.status) + " >");
+            LOG.info("RequestHandler::deleteResource - Response = < " + std::to_string(response.status) + " >");
         }
         else
         {
             response = Response::stockResponse(StockResponse::bad_request);
-            LOG.error("RequestHandler::handleRequest - Response = < " + std::to_string(response.status) + " - Not a directory >");
+            LOG.error("RequestHandler::deleteResource - Response = < " + std::to_string(response.status) + " - not existing file/directory >");
         }
     }
     catch(std::exception& e)
     {
         response = Response::stockResponse(StockResponse::internal_server_error);
-        LOG.error("RequestHandler::handleRequest - Response = < " + std::to_string(response.status) + " - " + e.what() + " >");
+        LOG.error("RequestHandler::deleteResource - Response = < " + std::to_string(response.status) + " - " + e.what() + " >");
     }
 }
 

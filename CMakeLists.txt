@@ -12,7 +12,7 @@ INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 link_directories(${Boost_LIBRARY_DIR})
 
 add_executable(start_server start_server.cpp utils/Logger.cpp models/Serializable.cpp communication/ServerConnection.cpp models/FileChunk.cpp communication/Server.cpp utils/StringUtils.cpp communication/RequestHandler.cpp models/Request.cpp models/Response.cpp converters/Parser.h models/FileConfig.cpp models/Header.cpp models/FileWriter.cpp)
-add_executable(start_client start_client.cpp utils/Logger.cpp models/Serializable.cpp communication/ClientConnection.cpp models/FileChunk.cpp communication/Client.cpp utils/StringUtils.cpp models/Request.cpp models/Response.cpp converters/Parser.h models/FileConfig.cpp models/Header.cpp utils/FileWatcher.cpp utils/FileWatcher.h)
+add_executable(start_client start_client.cpp utils/Logger.cpp models/Serializable.cpp communication/ClientConnection.cpp models/FileChunk.cpp communication/Client.cpp utils/StringUtils.cpp models/Request.cpp models/Response.cpp converters/Parser.h models/FileConfig.cpp models/Header.cpp models/FileWatcher.cpp)
 
 TARGET_LINK_LIBRARIES( start_server LINK_PUBLIC ${Boost_LIBRARIES} -lstdc++fs OpenSSL::SSL)
 TARGET_LINK_LIBRARIES( start_client LINK_PUBLIC ${Boost_LIBRARIES} -lstdc++fs OpenSSL::SSL)

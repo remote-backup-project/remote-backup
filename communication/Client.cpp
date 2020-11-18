@@ -11,68 +11,46 @@
 #include "../utils/Constants.h"
 #include "../utils/StringUtils.h"
 #include "../models/FileConfig.h"
-#include "../utils/FileWatcher.h"
 
 using boost::asio::ip::tcp;
 namespace fs = std::filesystem;
 namespace asio = boost::asio;
 
 
-Client::Client(): clientConnectionPtr()
+Client::Client():
+    clientConnectionPtr(),
+    signals(ioContext)
 {
-    fileConfig.readClientFile();
-    FileWatcher fileWatcher(fileConfig.getInputDirPath());
-    fileWatcher.start([&] (std::string news_on_path, FileWatcherStatus::FileStatus status) -> void {
-        // Process only regular files and directories, all other file types are ignored
-        if(!fs::is_regular_file(fs::path(news_on_path)) && !fs::is_directory(fs::path(news_on_path))
-            && status != FileWatcherStatus::FileStatus::ERASED) {
-            return;
-        }
+    signals.add(SIGINT);
+    signals.add(SIGTERM);
+#if defined(SIGQUIT)
+    signals.add(SIGQUIT);
+#endif
+    signals.async_wait(boost::bind(&Client::handleStop, this));
 
-        switch(status) {
-            case FileWatcherStatus::FileStatus::CREATED: {
-                if(fs::is_regular_file(fs::path(news_on_path))){
-                    LOG.debug("CREATED FILE - " + news_on_path);
-                    sendHashFile(news_on_path);
-                }
-                else if(fs::is_directory(fs::path(news_on_path))){
-                    LOG.debug("CREATED DIRECTORY- " + news_on_path);
-                    createRemoteDirectory(news_on_path);
-                }
-                break;
-            }
-            case FileWatcherStatus::FileStatus::MODIFIED: {
-                if(fs::is_regular_file(fs::path(news_on_path))){
-                    LOG.debug("MODIFIED FILE- " + news_on_path);
-                    sendHashFile(news_on_path);
-                }
-                break;
-            }
-            case FileWatcherStatus::FileStatus::ERASED: {
-                LOG.debug("DELETED - " + news_on_path);
-                //TODO funzione per eliminare file/directory con path "news_on_path"
-                std::string relativePath = StringUtils::getStringDifference(news_on_path, fileConfig.getInputDirPath());
-                FileChunk fileChunk(relativePath);
-                sendRequest(this, Services::DELETE_RESOURCE, fileChunk.to_string(), [](void*, std::string){});
-                break;
-            }
-            default: {
-                LOG.error("Error! Unknown file status.");
-            }
-        }
-    });
+    fileConfig.readClientFile();
+//    sendDirectory();
+    watchFileSystem();
 }
 
 void Client::run(){
     ioContext.run();
 }
 
+void Client::handleStop()
+{
+    fileWatcher.stop();
+    ioContext.stop();
+    LOG.info("Client::handleStop - Client stopped");
+}
+
+
 void Client::sendHashFile(const std::string& filePath)
 {
     LOG.debug("Client::sendHashFile - filePath = " + filePath);
     try{
-        std::pair<std::string, int> md5FileTuple = StringUtils::md5FromFile(filePath);
-        FileChunk fileChunk(md5FileTuple.first, filePath, StringUtils::getStringDifference(filePath, fileConfig.getInputDirPath()));
+        std::string md5FileTuple = StringUtils::md5FromFile(filePath);
+        FileChunk fileChunk(0, md5FileTuple, filePath, StringUtils::getStringDifference(filePath, fileConfig.getInputDirPath()));
         sendRequest(this, Services::CHECKSUM_FILE, fileChunk.to_string(), sendContentFile);
     }
     catch(std::exception& exception){
@@ -87,9 +65,9 @@ void Client::createRemoteDirectory(const std::string& directoryPath){
     sendRequest(this, Services::TRANSFER_DIRECTORY, fileChunk.to_string(), [](void*, std::string){});
 }
 
-void Client::sendDirectory(const std::string& directoryPath){
+void Client::sendDirectory(){
     LOG.debug("Client::sendDirectory - directory = " + fileConfig.getInputDirPath());
-    fs::path path(directoryPath);
+    fs::path path(fileConfig.getInputDirPath());
     for(auto &p : fs::recursive_directory_iterator(path)){
         if( !fs::is_directory(p.status()) ){
             sendHashFile(p.path().string());
@@ -121,12 +99,13 @@ void Client::sendContentFile(void* client, std::string filePath)
         }
 
         std::vector<char> data(Socket::CHUNK_SIZE + 1, 0);
+        long chunk = 1;
         while (ifs)
         {
             ifs.read(data.data(), Socket::CHUNK_SIZE);
             std::streamsize s = ifs.gcount();
             data[s] = 0;
-            FileChunk fileChunk(std::string(data.data(), s), filePath, StringUtils::getStringDifference(filePath, fileConfig.getInputDirPath()));
+            FileChunk fileChunk(chunk++, std::string(data.data(), s), filePath, StringUtils::getStringDifference(filePath, fileConfig.getInputDirPath()));
             sendRequest(client, Services::TRANSFER_FILE, fileChunk.to_string(), [](void*, std::string){});
         }
 
@@ -135,4 +114,42 @@ void Client::sendContentFile(void* client, std::string filePath)
     catch(std::exception& exception){
         LOG.error("Client::sendContentFile - " + std::string(exception.what()));
     }
+}
+
+void Client::watchFileSystem()
+{
+    fileWatcher.start(ioContext, [&] (std::string news_on_path, FileWatcherStatus::FileStatus status) -> void {
+
+        switch(status) {
+            case FileWatcherStatus::FileStatus::CREATED:
+                if(fs::is_directory(fs::path(news_on_path)))
+                {
+                    LOG.debug("Client::watchFileSystem - created directory : " + news_on_path);
+                    createRemoteDirectory(news_on_path);
+                }
+                else
+                {
+                    LOG.debug("Client::watchFileSystem - created file : " + news_on_path);
+                    sendHashFile(news_on_path);
+                }
+                break;
+            case FileWatcherStatus::FileStatus::MODIFIED:
+                if(!fs::is_directory(fs::path(news_on_path)))
+                {
+                    LOG.debug("Client::watchFileSystem - modified file : " + news_on_path);
+                    sendHashFile(news_on_path);
+                }
+                break;
+            case FileWatcherStatus::FileStatus::ERASED:
+            {
+                LOG.debug("Client::watchFileSystem - deleted : " + news_on_path);
+                FileChunk fileChunk(StringUtils::getStringDifference(news_on_path, fileConfig.getInputDirPath()));
+                sendRequest(this, Services::DELETE_RESOURCE, fileChunk.to_string(), [](void*, std::string){});
+                break;
+            }
+            default:
+                LOG.error("Client::watchFileSystem - Unknown file status < " + std::to_string((int)status) + " >");
+                break;
+        }
+    });
 }

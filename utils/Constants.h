@@ -23,7 +23,7 @@ namespace Services{
     const char TRANSFER_FILE[] = "/transfer/file";
     const char TRANSFER_DIRECTORY[] = "/transfer/directory";
     const char CHECKSUM_FILE[] = "/checksum";
-    const char DELETE_RESOURCE[]= "deleteResource";
+    const char DELETE_RESOURCE[]= "/deleteResource";
 }
 
 namespace StockResponse {

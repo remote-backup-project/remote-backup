@@ -149,7 +149,7 @@ std::string StringUtils::response_to_string(StockResponse::StatusType status){
     }
 }
 
-std::pair<std::string, long> StringUtils::md5FromFile(const std::string &path)
+std::string StringUtils::md5FromFile(const std::string &path)
 {
     unsigned char result[MD5_DIGEST_LENGTH];
     std::ifstream ifs(path, std::ios::in | std::ios::binary);
@@ -173,5 +173,5 @@ std::pair<std::string, long> StringUtils::md5FromFile(const std::string &path)
     for(int c : result)
         sout << std::setw(2) << (int)c;
 
-    return std::make_pair(sout.str(), ifs.tellg().operator long());
+    return sout.str();
 }

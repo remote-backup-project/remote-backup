@@ -12,7 +12,6 @@
 #include <boost/property_tree/json_parser.hpp>
 
 class FileChunk : public Serializable{
-    static std::map<std::string, long> chunkNumberMap;
     long chunkNumber;
     std::string content;
     std::string path;

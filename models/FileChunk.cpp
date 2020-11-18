@@ -7,52 +7,39 @@
 #include "../utils/StringUtils.h"
 #include <iostream>
 
-std::map<std::string, long> FileChunk::chunkNumberMap = {};
-
 FileChunk::FileChunk() {}
 
 /* costruttore usato per la request di deleteResource */
-FileChunk::FileChunk(std::string relativePath): relativePath(std::move(relativePath))
-{
-    chunkNumber = ++chunkNumberMap[this->relativePath];
-}
+FileChunk::FileChunk(std::string relativePath):
+    chunkNumber(-1),
+    relativePath(std::move(relativePath))
+{}
 
 FileChunk::FileChunk(std::string path, std::string relativePath):
+        chunkNumber(0),
         path(std::move(path)),
-        relativePath(std::move(relativePath))
-{
-    isFile = false;
-    chunkNumber = ++chunkNumberMap[this->relativePath];
-}
+        relativePath(std::move(relativePath)),
+        isFile(false)
+{}
 
 FileChunk::FileChunk(std::string content, std::string path, std::string relativePath):
     content(std::move(content)),
     path(std::move(path)),
-    relativePath(std::move(relativePath))
+    relativePath(std::move(relativePath)),
+    isFile(true)
 {
-    isFile = true;
-
     std::vector<std::string> results = StringUtils::split(this->path, "/");
     if(!results.empty())
         fileName = results[results.size()-1];
-
-    /**
-     * chunkNumber parte da 0 se:
-     *  - isFile = true
-     *  - content = hash del file
-     * altrimenti => chunkNumber parte da 1
-     */
-    chunkNumber = chunkNumberMap[this->relativePath]++;
 }
 
 FileChunk::FileChunk(long chunkNumber, std::string content, std::string path, std::string relativePath):
     chunkNumber(chunkNumber),
     content(std::move(content)),
     path(std::move(path)),
-    relativePath(std::move(relativePath))
+    relativePath(std::move(relativePath)),
+    isFile(true)
 {
-    isFile = true;
-
     std::vector<std::string> results = StringUtils::split(this->path, "/");
     if(!results.empty())
         fileName = results[results.size()-1];
