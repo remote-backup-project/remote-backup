@@ -22,6 +22,7 @@ class FileChunk : public Serializable{
 
 public:
     FileChunk();
+    FileChunk(std::string relativePath);
     FileChunk(std::string path, std::string relativePath);
     FileChunk(std::string content, std::string path, std::string relativePath);
     FileChunk(long chunkNumber, std::string content, std::string path, std::string relativePath);

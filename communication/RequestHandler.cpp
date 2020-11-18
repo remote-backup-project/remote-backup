@@ -41,6 +41,10 @@ void RequestHandler::handleRequest(Request& request, Response& response)
     {
         transferFile(request, response);
     }
+    else if(boost::equals(request.getUri(), Services::DELETE_RESOURCE))
+    {
+        deleteResource(request, response);
+    }
     else
     {
         response = Response::stockResponse(StockResponse::not_found);
@@ -204,6 +208,40 @@ void RequestHandler::checksumFile(Request& request, Response& response)
     {
         response = Response::stockResponse(StockResponse::internal_server_error);
         LOG.error("RequestHandler::checksumFile - Response = < " + std::to_string(response.status) + " - " + e.what() + " >");
+    }
+}
+
+void RequestHandler::deleteResource(Request& request, Response& response){
+    auto fileChunk = Deserializer::deserialize<FileChunk>(request.getBody());
+
+    LOG.debug("RequestHandler::handleRequest - Delete Resource = " + fileChunk.getRelativePath() + " - Chunk = " +
+              std::to_string(fileChunk.getChunkNumber()));
+    try
+    {
+        fs::path path(outputDirPath + fileChunk.getRelativePath());
+
+        if (fs::exists(path) && fs::is_directory(path))
+        {
+            fs::remove_all(path); //rimozione ricorsiva della cartella e del suo contenuto
+            response = Response::stockResponse(StockResponse::ok);
+            LOG.info("RequestHandler::handleRequest - Response = < " + std::to_string(response.status) + " >");
+        }
+        else if(fs::exists(path))
+        {
+            fs::remove(path); //rimozione file
+            response = Response::stockResponse(StockResponse::ok);
+            LOG.info("RequestHandler::handleRequest - Response = < " + std::to_string(response.status) + " >");
+        }
+        else
+        {
+            response = Response::stockResponse(StockResponse::bad_request);
+            LOG.error("RequestHandler::handleRequest - Response = < " + std::to_string(response.status) + " - Not a directory >");
+        }
+    }
+    catch(std::exception& e)
+    {
+        response = Response::stockResponse(StockResponse::internal_server_error);
+        LOG.error("RequestHandler::handleRequest - Response = < " + std::to_string(response.status) + " - " + e.what() + " >");
     }
 }
 

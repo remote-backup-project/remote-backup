@@ -51,6 +51,9 @@ Client::Client(): clientConnectionPtr()
             case FileWatcherStatus::FileStatus::ERASED: {
                 LOG.debug("DELETED - " + news_on_path);
                 //TODO funzione per eliminare file/directory con path "news_on_path"
+                std::string relativePath = StringUtils::getStringDifference(news_on_path, fileConfig.getInputDirPath());
+                FileChunk fileChunk(relativePath);
+                sendRequest(this, Services::DELETE_RESOURCE, fileChunk.to_string(), [](void*, std::string){});
                 break;
             }
             default: {

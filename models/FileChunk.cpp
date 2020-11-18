@@ -11,6 +11,12 @@ std::map<std::string, long> FileChunk::chunkNumberMap = {};
 
 FileChunk::FileChunk() {}
 
+/* costruttore usato per la request di deleteResource */
+FileChunk::FileChunk(std::string relativePath): relativePath(std::move(relativePath))
+{
+    chunkNumber = ++chunkNumberMap[this->relativePath];
+}
+
 FileChunk::FileChunk(std::string path, std::string relativePath):
         path(std::move(path)),
         relativePath(std::move(relativePath))

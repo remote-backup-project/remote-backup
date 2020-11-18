@@ -30,6 +30,8 @@ private:
 
     void checksumFile(Request& request, Response& response);
 
+    void deleteResource(Request& request, Response& response);
+
     void createDirectories(const std::string& relativePath);
 };
 
