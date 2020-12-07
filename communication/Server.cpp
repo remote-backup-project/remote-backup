@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 02/11/20.
-//
-
 #include "Server.h"
 #include "../utils/Logger.h"
 #include <iostream>

@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 07/11/20.
-//
-
 #include "StringUtils.h"
 #include <search.h>
 #include <openssl/md5.h>

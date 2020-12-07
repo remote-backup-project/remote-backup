@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 07/11/20.
-//
-
 #include "./utils/Logger.h"
 #include "./communication/Client.h"
 #include "./models/FileWriter.h"

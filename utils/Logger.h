@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 25/10/20.
-//
-
 #ifndef REMOTE_BACKUP_LOGGER_H
 #define REMOTE_BACKUP_LOGGER_H
 

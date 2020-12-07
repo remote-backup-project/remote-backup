@@ -1,16 +1,232 @@
-[2020-11-17 21:01:41.485402] [debug] - FW - DELETED - /home/gaetano/CLionProjects/remote-backup/inputDirectory/jsdnfidvbfdivnbv
-[2020-11-17 21:01:41.501777] [debug] - DELETED - /home/gaetano/CLionProjects/remote-backup/inputDirectory/jsdnfidvbfdivnbv
-[2020-11-17 21:01:41.502046] [debug] - CREATED DIRECTORY- /home/gaetano/CLionProjects/remote-backup/inputDirectory/jfnidnf
-[2020-11-17 21:03:41.510625] [debug] - FW - DELETED - /home/gaetano/CLionProjects/remote-backup/inputDirectory/newTest.txt
-[2020-11-17 21:03:41.510710] [debug] - DELETED - /home/gaetano/CLionProjects/remote-backup/inputDirectory/newTest.txt
-[2020-11-17 21:03:41.510876] [debug] - CREATED FILE - /home/gaetano/CLionProjects/remote-backup/inputDirectory/jdfsijv.txt
-[2020-11-17 21:04:51.514490] [debug] - FW - DELETED - /home/gaetano/CLionProjects/remote-backup/inputDirectory/jdfsijv.txt
-[2020-11-17 21:04:51.514662] [debug] - DELETED - /home/gaetano/CLionProjects/remote-backup/inputDirectory/jdfsijv.txt
-[2020-11-17 21:04:51.514929] [debug] - MODIFIED DIRECTORY- /home/gaetano/CLionProjects/remote-backup/inputDirectory/jfnidnf
-[2020-11-17 21:04:51.515061] [debug] - CREATED FILE - /home/gaetano/CLionProjects/remote-backup/inputDirectory/jfnidnf/jdfsijv.txt
-[2020-11-17 21:13:11.550258] [debug] - FW - DELETED - /home/gaetano/CLionProjects/remote-backup/inputDirectory/jfnidnf/jdfsijv.txt
-[2020-11-17 21:13:11.550481] [debug] - DELETED - /home/gaetano/CLionProjects/remote-backup/inputDirectory/jfnidnf/jdfsijv.txt
-[2020-11-17 21:13:11.550606] [debug] - FW - DELETED - /home/gaetano/CLionProjects/remote-backup/inputDirectory/jfnidnf
-[2020-11-17 21:13:11.550736] [debug] - DELETED - /home/gaetano/CLionProjects/remote-backup/inputDirectory/jfnidnf
-[2020-11-17 21:13:11.551115] [debug] - CREATED DIRECTORY- /home/gaetano/CLionProjects/remote-backup/inputDirectory/ygguyyu
-[2020-11-17 21:13:11.551292] [debug] - CREATED FILE - /home/gaetano/CLionProjects/remote-backup/inputDirectory/ygguyyu/jdfsijv.txt
+[2020-12-07 19:46:24.045524] [trace] - FileWatcher::start - inputDirPath = /home/gaetano/CLionProjects/remote-backup/inputDirectory
+[2020-12-07 19:46:24.047179] [debug] - Cl[2020-12-07 19:46:24.050340] [debug] - Server::handleAccept
+[2020-12-07 19:46:24.050466] [debug] - ServerConnection::start
+[2020-12-07 19:46:24.050547] [debug] - Server::startAccept
+[2020-12-07 19:46:24.051067] [debug] - ServerConnection::handleRead
+[2020-12-07 19:46:24.052428] [info] - RequestHandler::handleRequest - Request = {"uri":"\/transfer\/directory","body":"{\"content\":\"\",\"path\":\"\\\/home\\\/gaetano\\\/CLionProjects\\\/remote-backup\\\/inputDirectory\\\/directory\",\"fileName\":\"\",\"relativePath\":\"\\\/directory\",\"chunkNumber\":\"0\",\"isFile\":\"false\",\"fileSize\":\"140724960075280\",\"fileHash\":\"\"}\n","headers":"[{\"[2020-12-07 19:46:24.052495] [debug] - Client::watchFileSystem - created file : /home/gaetano/CLionProjects/remote-backup/inputDirectory/directory/prova2.ht[2020-12-07 19:46:24.052741] [debug] - RequestHandler::authenticateClient
+[2020-12-07 19:46:24.052827] [info] - RequestHandler::authenticateClient - Found [2020-12-07 19:46:24.053857] [info] - Client::sendRequest - URI = < /checksum >
+[2020-12-07 19:46:24.054139] [debug] - ClientConnection::start - File/Directory = /directory/prova2.html, Chuck = 0
+[2020-12-07 19:46:24.054298] [debug] - ClientConnection::handleResolve - File = /directory/p[2020-12-07 19:46:24.0[2020-12-07 19:46:24.054649] [debug] - ClientConnection::handleConnect - File = /directory/prova2.html, Chuck = 0
+[2020-12-07 19:46:24.054901] [debug] - Client::watchFileSystem - created file : /home/gaetano/CLionProjects/remote[2020-12-07 19:46:24.055692] [info] - RequestHandler::handleRequest - Request = {"uri":"\/checksum","body":"{\"content\":\"\",\"path\":\"\\\/home\\\/gaetano\\\/CLionProjects\\\/remote-backup\\\/inputDirectory\\\/directory\\\/prova2.html\",\"fileName\":\"prova2.html\",\"relativePath\":\"\\\/directory\\\/prova2.html\",\"chunkNumber\":\"0\",\"isFile\":\"true\",\"fileSize\":\"123\",\"fileHas[2020-12-07 19:46:24.055791] [debug] - ClientConnection::handleResolve - File = /directory/prova.html, Chuck = 0
+[2020-12-07 19:46:24.055903] [debug] - ClientConnection::handleConnect - File = /directory/prova.html, Chuck = 0
+[2020-12-07 19:46:24.056165] [debug] - Client::watchFileSystem - created file : /home/gaetano/CLionProjects/remote-backup/inputDirectory/IDJEKRJBG.jpg
+[2020-12-07 19:46:24.056207] [debug] - Client::sendHashFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/IDJEKRJBG.jpg
+[2020-12-07 19:46:24.058947] [info] - Client::sendRequest - URI = < /checksum >
+[2020-12-07 19:46:24.059345] [debug] - ClientConnection::start - File/Directory = /IDJEKRJBG.jpg, Chuck = 0
+[2020-12-07 19:46:24.059546] [debug] - ClientConnection::handleResolve - File = /IDJEKRJBG.jpg, Chuck = 0
+[2020-12-07 19:46:24.059663] [debug] - ClientConnection::handleConnect - File = /IDJEKRJBG.jpg, Chuck = 0
+[2020-12-07 19:46:24.060204] [debug] - Client::watchFileSystem - created file : /home/gaetano/CLionProjects/remote-backup/inputDirectory/prova.html
+[2020-12-07 19:46:24.060261] [debug] - Client::sendHashFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/prova.html
+[2020-12-07 19:46:24.060623] [info] - Client::sendRequest - URI = < /checksum >
+[2020-12-07 19:46:24.060895] [debug] - ClientConnection::start - File/Directory = /prova.html, Chuck = 0
+[2020-12-07 19:46:24.061025] [debug] - ClientConnection::handleResolve - File = /prova.html, Chuck = 0
+[2020-12-07 19:46:24.061130] [debug] - ClientConnection::handleConnect - File = /prova.html, Chuck = 0
+[2020-12-07 19:46:24.061362] [debug] - ClientConnection::handleWrite - Directory = /directory
+[2020-12-07 19:46:24.061420] [debug] - ClientConnection::handleWrite - File = /directory/prova2.html, Chuck = 0
+[2020-12-07 19:46:24.061465] [debug] - ClientConnection::handleWrite - File = /directory/prova.html, Chuck = 0
+[2020-12-07 19:46:24.061509] [debug] - ClientConnection::handleWrite - File = /IDJEKRJBG.jpg, Chuck = 0
+[2020-12-07 19:46:24.061551] [debug] - ClientConnection::handleWrite - File = /prova.html, Chuck = 0
+[2020-12-07 19:46:24.061604] [debug] - ClientConnection::handleRead - Directory = /directory
+[2020-12-07 19:46:24.061712] [info] - ClientConnection::handleResponse - Response < 200 : OK >
+[2020-12-07 19:46:24.061793] [debug] - ClientConnection::handleRead - File = /directory/prova2.html, Chuck = 0
+[2020-12-07 19:46:24.061891] [info] - ClientConnection::handleResponse - Response < 200 : OK >
+[2020-12-07 19:46:24.061964] [debug] - ClientConnection::handleRead - File = /directory/prova.html, Chuck = 0
+[2020-12-07 19:46:24.062059] [info] - ClientConnection::handleResponse - Response < 200 : OK >
+[2020-12-07 19:46:27.062328] [debug] - ClientConnection::handleRead - File = /prova.html, Chuck = 0
+[2020-12-07 19:46:27.062502] [info] - ClientConnection::handleResponse - Response < 200 : OK >
+[2020-12-07 19:46:27.062597] [debug] - ClientConnection::handleRead - File = /IDJEKRJBG.jpg, Chuck = 0
+[2020-12-07 19:46:27.062726] [info] - ClientConnection::handleResponse - Response < 200 : OK >
+[2020-12-07 19:46:48.065881] [debug] - Client::watchFileSystem - created file : /home/gaetano/CLionProjects/remote-backup/inputDirectory/.test.txt.swp
+[2020-12-07 19:46:48.066042] [debug] - Client::sendHashFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/.test.txt.swp
+[2020-12-07 19:46:48.066677] [info] - Client::sendRequest - URI = < /checksum >
+[2020-12-07 19:46:48.067489] [debug] - ClientConnection::start - File/Directory = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:46:48.067838] [debug] - ClientConnection::handleResolve - File = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:46:48.068079] [debug] - ClientConnection::handleConnect - File = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:46:48.068888] [debug] - ClientConnection::handleWrite - File = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:46:51.069510] [debug] - ClientConnection::handleRead - File = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:46:51.069960] [trace] - ClientConnection::handleResponse - Response < 100 : CONTINUE >
+[2020-12-07 19:46:51.070188] [debug] - Client::sendContentFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/.test.txt.swp
+[2020-12-07 19:46:51.071091] [info] - Client::sendRequest - URI = < /transfer/file >
+[2020-12-07 19:46:51.073279] [debug] - ClientConnection::start - File/Directory = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:46:51.073664] [debug] - ClientConnection::handleResolve - File = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:46:51.073947] [debug] - ClientConnection::handleConnect - File = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:46:51.074955] [debug] - ClientConnection::handleWrite - File = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:46:54.075954] [debug] - Client::watchFileSystem - modified file : /home/gaetano/CLionProjects/remote-backup/inputDirectory/.test.txt.swp
+[2020-12-07 19:46:54.076234] [debug] - Client::sendHashFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/.test.txt.swp
+[2020-12-07 19:46:54.077458] [info] - Client::sendRequest - URI = < /checksum >
+[2020-12-07 19:46:54.078337] [debug] - ClientConnection::start - File/Directory = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:46:54.078733] [debug] - ClientConnection::handleResolve - File = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:46:54.079014] [debug] - ClientConnection::handleConnect - File = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:46:54.079876] [debug] - ClientConnection::handleWrite - File = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:46:54.080053] [debug] - ClientConnection::handleRead - File = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:46:54.080454] [info] - ClientConnection::handleResponse - Response < 200 : OK >
+[2020-12-07 19:46:57.081122] [debug] - ClientConnection::handleRead - File = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:46:57.081544] [trace] - ClientConnection::handleResponse - Response < 100 : CONTINUE >
+[2020-12-07 19:46:57.081750] [debug] - Client::sendContentFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/.test.txt.swp
+[2020-12-07 19:46:57.082667] [info] - Client::sendRequest - URI = < /transfer/file >
+[2020-12-07 19:46:57.084631] [debug] - ClientConnection::start - File/Directory = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:46:57.084865] [debug] - ClientConnection::handleResolve - File = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:46:57.085041] [debug] - ClientConnection::handleConnect - File = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:46:57.085641] [debug] - ClientConnection::handleWrite - File = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:47:00.085922] [debug] - Client::watchFileSystem - deleted : /home/gaetano/CLionProjects/remote-backup/inputDirectory/.test.txt.swp
+[2020-12-07 19:47:00.086298] [info] - Client::sendRequest - URI = < /deleteResource >
+[2020-12-07 19:47:00.086522] [debug] - ClientConnection::start - File/Directory = /.test.txt.swp, Chuck = -1
+[2020-12-07 19:47:00.086669] [debug] - ClientConnection::handleResolve - File = /.test.txt.swp, Chuck = -1
+[2020-12-07 19:47:00.086786] [debug] - ClientConnection::handleConnect - File = /.test.txt.swp, Chuck = -1
+[2020-12-07 19:47:00.087141] [debug] - Client::watchFileSystem - created file : /home/gaetano/CLionProjects/remote-backup/inputDirectory/test.txt
+[2020-12-07 19:47:00.087179] [debug] - Client::sendHashFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/test.txt
+[2020-12-07 19:47:00.087384] [info] - Client::sendRequest - URI = < /checksum >
+[2020-12-07 19:47:00.087624] [debug] - ClientConnection::start - File/Directory = /test.txt, Chuck = 0
+[2020-12-07 19:47:00.087742] [debug] - ClientConnection::handleResolve - File = /test.txt, Chuck = 0
+[2020-12-07 19:47:00.087833] [debug] - ClientConnection::handleConnect - File = /test.txt, Chuck = 0
+[2020-12-07 19:47:00.088083] [debug] - ClientConnection::handleWrite - File = /.test.txt.swp, Chuck = -1
+[2020-12-07 19:47:00.088131] [debug] - ClientConnection::handleWrite - File = /test.txt, Chuck = 0
+[2020-12-07 19:47:00.088173] [debug] - ClientConnection::handleRead - File = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:47:00.088269] [info] - ClientConnection::handleResponse - Response < 200 : OK >
+[2020-12-07 19:47:00.088371] [debug] - ClientConnection::handleRead - File = /.test.txt.swp, Chuck = -1
+[2020-12-07 19:47:00.088468] [info] - ClientConnection::handleResponse - Response < 200 : OK >
+[2020-12-07 19:47:03.088739] [debug] - ClientConnection::handleRead - File = /test.txt, Chuck = 0
+[2020-12-07 19:47:03.089001] [trace] - ClientConnection::handleResponse - Response < 100 : CONTINUE >
+[2020-12-07 19:47:03.089091] [debug] - Client::sendContentFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/test.txt
+[2020-12-07 19:47:03.089287] [info] - Client::sendRequest - URI = < /transfer/file >
+[2020-12-07 19:47:03.089476] [debug] - ClientConnection::start - File/Directory = /test.txt, Chuck = 1
+[2020-12-07 19:47:03.089606] [debug] - ClientConnection::handleResolve - File = /test.txt, Chuck = 1
+[2020-12-07 19:47:03.089710] [debug] - ClientConnection::handleConnect - File = /test.txt, Chuck = 1
+[2020-12-07 19:47:03.089943] [debug] - ClientConnection::handleWrite - File = /test.txt, Chuck = 1
+[2020-12-07 19:47:06.090558] [debug] - ClientConnection::handleRead - File = /test.txt, Chuck = 1
+[2020-12-07 19:47:06.091001] [info] - ClientConnection::handleResponse - Response < 200 : OK >
+[2020-12-07 19:47:24.093869] [debug] - Client::watchFileSystem - created file : /home/gaetano/CLionProjects/remote-backup/inputDirectory/.test.txt.swp
+[2020-12-07 19:47:24.094048] [debug] - Client::sendHashFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/.test.txt.swp
+[2020-12-07 19:47:24.094675] [info] - Client::sendRequest - URI = < /checksum >
+[2020-12-07 19:47:24.095447] [debug] - ClientConnection::start - File/Directory = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:47:24.095793] [debug] - ClientConnection::handleResolve - File = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:47:24.096065] [debug] - ClientConnection::handleConnect - File = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:47:24.096926] [debug] - ClientConnection::handleWrite - File = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:47:27.097600] [debug] - Client::watchFileSystem - modified file : /home/gaetano/CLionProjects/remote-backup/inputDirectory/.test.txt.swp
+[2020-12-07 19:47:27.097888] [debug] - Client::sendHashFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/.test.txt.swp
+[2020-12-07 19:47:27.098473] [info] - Client::sendRequest - URI = < /checksum >
+[2020-12-07 19:47:27.099081] [debug] - ClientConnection::start - File/Directory = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:47:27.099372] [debug] - ClientConnection::handleResolve - File = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:47:27.099613] [debug] - ClientConnection::handleConnect - File = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:47:27.100544] [debug] - ClientConnection::handleWrite - File = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:47:27.100737] [debug] - ClientConnection::handleRead - File = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:47:27.101052] [trace] - ClientConnection::handleResponse - Response < 100 : CONTINUE >
+[2020-12-07 19:47:27.101232] [debug] - Client::sendContentFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/.test.txt.swp
+[2020-12-07 19:47:27.102086] [info] - Client::sendRequest - URI = < /transfer/file >
+[2020-12-07 19:47:27.104314] [debug] - ClientConnection::start - File/Directory = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:47:27.104495] [debug] - ClientConnection::handleResolve - File = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:47:27.104582] [debug] - ClientConnection::handleConnect - File = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:47:27.104903] [debug] - ClientConnection::handleWrite - File = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:47:27.104954] [debug] - ClientConnection::handleRead - File = /.test.txt.swp, Chuck = 0
+[2020-12-07 19:47:27.105059] [trace] - ClientConnection::handleResponse - Response < 100 : CONTINUE >
+[2020-12-07 19:47:27.105116] [debug] - Client::sendContentFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/.test.txt.swp
+[2020-12-07 19:47:27.105396] [info] - Client::sendRequest - URI = < /transfer/file >
+[2020-12-07 19:47:27.106076] [debug] - ClientConnection::start - File/Directory = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:47:27.106174] [debug] - ClientConnection::handleResolve - File = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:47:27.106249] [debug] - ClientConnection::handleConnect - File = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:47:27.106603] [debug] - ClientConnection::handleWrite - File = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:47:30.106862] [debug] - Client::watchFileSystem - modified file : /home/gaetano/CLionProjects/remote-backup/inputDirectory/test.txt
+[2020-12-07 19:47:30.106953] [debug] - Client::sendHashFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/test.txt
+[2020-12-07 19:47:30.107225] [info] - Client::sendRequest - URI = < /checksum >
+[2020-12-07 19:47:30.107486] [debug] - ClientConnection::start - File/Directory = /test.txt, Chuck = 0
+[2020-12-07 19:47:30.107668] [debug] - ClientConnection::handleResolve - File = /test.txt, Chuck = 0
+[2020-12-07 19:47:30.107797] [debug] - ClientConnection::handleConnect - File = /test.txt, Chuck = 0
+[2020-12-07 19:47:30.108116] [debug] - ClientConnection::handleWrite - File = /test.txt, Chuck = 0
+[2020-12-07 19:47:30.108190] [debug] - ClientConnection::handleRead - File = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:47:30.108339] [info] - ClientConnection::handleResponse - Response < 200 : OK >
+[2020-12-07 19:47:30.108472] [debug] - ClientConnection::handleRead - File = /.test.txt.swp, Chuck = 1
+[2020-12-07 19:47:30.108597] [info] - ClientConnection::handleResponse - Response < 200 : OK >
+[2020-12-07 19:47:33.108889] [debug] - Client::watchFileSystem - deleted : /home/gaetano/CLionProjects/remote-backup/inputDirectory/.test.txt.swp
+[2020-12-07 19:47:33.109470] [info] - Client::sendRequest - URI = < /deleteResource >
+[2020-12-07 19:47:33.109999] [debug] - ClientConnection::start - File/Directory = /.test.txt.swp, Chuck = -1
+[2020-12-07 19:47:33.110372] [debug] - ClientConnection::handleResolve - File = /.test.txt.swp, Chuck = -1
+[2020-12-07 19:47:33.110665] [debug] - ClientConnection::handleConnect - File = /.test.txt.swp, Chuck = -1
+[2020-12-07 19:47:33.111801] [debug] - ClientConnection::handleWrite - File = /.test.txt.swp, Chuck = -1
+[2020-12-07 19:47:33.112010] [debug] - ClientConnection::handleRead - File = /test.txt, Chuck = 0
+[2020-12-07 19:47:33.112411] [trace] - ClientConnection::handleResponse - Response < 100 : CONTINUE >
+[2020-12-07 19:47:33.112532] [debug] - Client::sendContentFile - filePath = /home/gaetano/CLionProjects/remote-backup/inputDirectory/test.txt
+[2020-12-07 19:47:33.112920] [info] - Client::sendRequest - URI = < /transfer/file >
+[2020-12-07 19:47:33.113358] [debug] - ClientConnection::start - File/Directory = /test.txt, Chuck = 1
+[2020-12-07 19:47:33.113550] [debug] - ClientConnection::handleResolve - File = /test.txt, Chuck = 1
+[2020-12-07 19:47:33.113696] [debug] - ClientConnection::handleConnect - File = /test.txt, Chuck = 1
+[2020-12-07 19:47:33.114137] [debug] - ClientConnection::handleWrite - File = /test.txt, Chuck = 1
+[2020-12-07 19:47:33.114234] [debug] - ClientConnection::handleRead - File = /.test.txt.swp, Chuck = -1
+[2020-12-07 19:47:33.114374] [info] - ClientConnection::handleResponse - Response < 200 : OK >
+[2020-12-07 19:47:36.114945] [debug] - ClientConnection::handleRead - File = /test.txt, Chuck = 1
+[2020-12-07 19:47:36.115374] [info] - ClientConnection::handleResponse - Response < 200 : OK >
+ndler::authenticateClient
+[2020-12-07 19:47:03.090638] [info] - RequestHandler::authenticateClient - Found Client and Path
+[2020-12-07 19:47:03.090789] [debug] - RequestHandler::transferFile - File = /test.txt - Chunk = 1
+[2020-12-07 19:47:03.090962] [info] - RequestHandler::transferFile - Response = < 200 >
+[2020-12-07 19:47:03.091074] [debug] - ServerConnection::handleWrite
+[2020-12-07 19:47:24.096185] [debug] - Server::handleAccept
+[2020-12-07 19:47:24.096392] [debug] - ServerConnection::start
+[2020-12-07 19:47:24.096513] [debug] - Server::startAccept
+[2020-12-07 19:47:24.096869] [debug] - ServerConnection::handleRead
+[2020-12-07 19:47:24.098782] [info] - RequestHandler::handleRequest - Request = {"uri":"\/checksum","body":"{\"content\":\"\",\"path\":\"\\\/home\\\/gaetano\\\/CLionProjects\\\/remote-backup\\\/inputDirectory\\\/.test.txt.swp\",\"fileName\":\".test.txt.swp\",\"relativePath\":\"\\\/.test.txt.swp\",\"chunkNumber\":\"0\",\"isFile\":\"true\",\"fileSize\":\"1024\",\"fileHash\":\"d30eb119a825f65354e299b33c380a04\"}\n","headers":"[{\"name\":\"username\",\"value\":\"Gaetano\"}\n\r\n{\"name\":\"inputDirPath\",\"value\":\"_home_gaetano_CLionProjects_remote-backup_inputDirectory\"}\n\r\n]"}
+[2020-12-07 19:47:24.098898] [debug] - RequestHandler::authenticateClient
+[2020-12-07 19:47:24.099034] [info] - RequestHandler::authenticateClient - Found Client and Path
+[2020-12-07 19:47:24.099646] [debug] - RequestHandler::checksumFile - File = /.test.txt.swp
+[2020-12-07 19:47:24.099775] [trace] - RequestHandler::checksumFile - Response = < 100 - File < /.test.txt.swp > doesn't exists or has changed >
+[2020-12-07 19:47:24.100147] [debug] - ServerConnection::handleWrite
+[2020-12-07 19:47:27.099695] [debug] - Server::handleAccept
+[2020-12-07 19:47:27.099885] [debug] - ServerConnection::start
+[2020-12-07 19:47:27.100035] [debug] - Server::startAccept
+[2020-12-07 19:47:27.100473] [debug] - ServerConnection::handleRead
+[2020-12-07 19:47:27.102501] [info] - RequestHandler::handleRequest - Request = {"uri":"\/checksum","body":"{\"content\":\"\",\"path\":\"\\\/home\\\/gaetano\\\/CLionProjects\\\/remote-backup\\\/inputDirectory\\\/.test.txt.swp\",\"fileName\":\".test.txt.swp\",\"relativePath\":\"\\\/.test.txt.swp\",\"chunkNumber\":\"0\",\"isFile\":\"true\",\"fileSize\":\"1024\",\"fileHash\":\"0f662050f98ca5d3a6366b0b46ee88cd\"}\n","headers":"[{\"name\":\"username\",\"value\":\"Gaetano\"}\n\r\n{\"name\":\"inputDirPath\",\"value\":\"_home_gaetano_CLionProjects_remote-backup_inputDirectory\"}\n\r\n]"}
+[2020-12-07 19:47:27.102624] [debug] - RequestHandler::authenticateClient
+[2020-12-07 19:47:27.102785] [info] - RequestHandler::authenticateClient - Found Client and Path
+[2020-12-07 19:47:27.103331] [debug] - RequestHandler::checksumFile - File = /.test.txt.swp
+[2020-12-07 19:47:27.103454] [trace] - RequestHandler::checksumFile - Response = < 100 - File < /.test.txt.swp > doesn't exists or has changed >
+[2020-12-07 19:47:27.103762] [debug] - ServerConnection::handleWrite
+[2020-12-07 19:47:27.104626] [debug] - Server::handleAccept
+[2020-12-07 19:47:27.104688] [debug] - ServerConnection::start
+[2020-12-07 19:47:27.104737] [debug] - Server::startAccept
+[2020-12-07 19:47:27.104918] [debug] - ServerConnection::handleRead
+[2020-12-07 19:47:27.106267] [debug] - Server::handleAccept
+[2020-12-07 19:47:27.106319] [debug] - ServerConnection::start
+[2020-12-07 19:47:27.106364] [debug] - Server::startAccept
+[2020-12-07 19:47:27.106592] [debug] - ServerConnection::handleRead
+[2020-12-07 19:47:27.106803] [info] - RequestHandler::handleRequest - Request = {"uri":"\/transfer\/file","body":"{\"content\":\"YjBuYW5vIDQuOAAAAAAAAAAAAAAAAAAA0GUAAGdhZXRhbm8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABnYWV0YW5vLUxlbm92by1HNTAtODAAAAAAAAAAAAAAAAAAAAAAAAAAdGVzdC50eHQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABVAAAAAAAAAAAAAAAAAAAAAA==\",\"path\":\"\\\/home\\\/gaetano\\\/CLionProjects\\\/remote-backup\\\/inputDirectory\\\/.test.txt.swp\",\"fileName\":\".test.txt.swp\",\"relativePath\":\"\\\/.test.txt.swp\",\"chunkNumber\":\"1\",\"isFile\":\"true\",\"fileSize\":\"1024\",\"fileHash\":\"0f662050f98ca5d3a6366b0b46ee88cd\"}\n","headers":"[{\"name\":\"username\",\"value\":\"Gaetano\"}\n\r\n{\"name\":\"inputDirPath\",\"value\":\"_home_gaetano_CLionProjects_remote-backup_inputDirectory\"}\n\r\n]"}
+[2020-12-07 19:47:27.106874] [debug] - RequestHandler::authenticateClient
+[2020-12-07 19:47:27.106927] [info] - RequestHandler::authenticateClient - Found Client and Path
+[2020-12-07 19:47:27.108014] [debug] - RequestHandler::transferFile - File = /.test.txt.swp - Chunk = 1
+[2020-12-07 19:47:27.108229] [info] - RequestHandler::transferFile - Response = < 200 >
+[2020-12-07 19:47:27.108406] [debug] - ServerConnection::handleWrite
+[2020-12-07 19:47:27.108953] [info] - RequestHandler::handleRequest - Request = {"uri":"\/transfer\/file","body":"{\"content\":\"YjBuYW5vIDQuOAAAAAAAAAAAAAAAAAAA0GUAAGdhZXRhbm8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABnYWV0YW5vLUxlbm92by1HNTAtODAAAAAAAAAAAAAAAAAAAAAAAAAAdGVzdC50eHQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABVAAAAAAAAAAAAAAAAAAAAAA==\",\"path\":\"\\\/home\\\/gaetano\\\/CLionProjects\\\/remote-backup\\\/inputDirectory\\\/.test.txt.swp\",\"fileName\":\".test.txt.swp\",\"relativePath\":\"\\\/.test.txt.swp\",\"chunkNumber\":\"1\",\"isFile\":\"true\",\"fileSize\":\"1024\",\"fileHash\":\"0f662050f98ca5d3a6366b0b46ee88cd\"}\n","headers":"[{\"name\":\"username\",\"value\":\"Gaetano\"}\n\r\n{\"name\":\"inputDirPath\",\"value\":\"_home_gaetano_CLionProjects_remote-backup_inputDirectory\"}\n\r\n]"}
+[2020-12-07 19:47:27.109012] [debug] - RequestHandler::authenticateClient
+[2020-12-07 19:47:27.109050] [info] - RequestHandler::authenticateClient - Found Client and Path
+[2020-12-07 19:47:27.109716] [debug] - RequestHandler::transferFile - File = /.test.txt.swp - Chunk = 1
+[2020-12-07 19:47:27.109928] [info] - RequestHandler::transferFile - Response = < 200 >
+[2020-12-07 19:47:27.110038] [debug] - ServerConnection::handleWrite
+[2020-12-07 19:47:30.107847] [debug] - Server::handleAccept
+[2020-12-07 19:47:30.107936] [debug] - ServerConnection::start
+[2020-12-07 19:47:30.108007] [debug] - Server::startAccept
+[2020-12-07 19:47:30.108082] [debug] - ServerConnection::handleRead
+[2020-12-07 19:47:30.109035] [info] - RequestHandler::handleRequest - Request = {"uri":"\/checksum","body":"{\"content\":\"\",\"path\":\"\\\/home\\\/gaetano\\\/CLionProjects\\\/remote-backup\\\/inputDirectory\\\/test.txt\",\"fileName\":\"test.txt\",\"relativePath\":\"\\\/test.txt\",\"chunkNumber\":\"0\",\"isFile\":\"true\",\"fileSize\":\"6\",\"fileHash\":\"126a8a51b9d1bbd07fddc65819a542c3\"}\n","headers":"[{\"name\":\"username\",\"value\":\"Gaetano\"}\n\r\n{\"name\":\"inputDirPath\",\"value\":\"_home_gaetano_CLionProjects_remote-backup_inputDirectory\"}\n\r\n]"}
+[2020-12-07 19:47:30.109125] [debug] - RequestHandler::authenticateClient
+[2020-12-07 19:47:30.109281] [info] - RequestHandler::authenticateClient - Found Client and Path
+[2020-12-07 19:47:30.109513] [debug] - RequestHandler::checksumFile - File = /test.txt
+[2020-12-07 19:47:30.109628] [trace] - RequestHandler::checksumFile - Response = < 100 - File < /test.txt > doesn't exists or has changed >
+[2020-12-07 19:47:30.109790] [debug] - ServerConnection::handleWrite
+[2020-12-07 19:47:33.110776] [debug] - Server::handleAccept
+[2020-12-07 19:47:33.110981] [debug] - ServerConnection::start
+[2020-12-07 19:47:33.111146] [debug] - Server::startAccept
+[2020-12-07 19:47:33.111380] [debug] - ServerConnection::handleRead
+[2020-12-07 19:47:33.113176] [info] - RequestHandler::handleRequest - Request = {"uri":"\/deleteResource","body":"{\"content\":\"\",\"path\":\"\",\"fileName\":\"\",\"relativePath\":\"\\\/.test.txt.swp\",\"chunkNumber\":\"-1\",\"isFile\":\"true\",\"fileSize\":\"140724960074816\",\"fileHash\":\"\"}\n","headers":"[{\"name\":\"username\",\"value\":\"Gaetano\"}\n\r\n{\"name\":\"inputDirPath\",\"value\":\"_home_gaetano_CLionProjects_remote-backup_inputDirectory\"}\n\r\n]"}
+[2020-12-07 19:47:33.113257] [debug] - RequestHandler::authenticateClient
+[2020-12-07 19:47:33.113339] [info] - RequestHandler::authenticateClient - Found Client and Path
+[2020-12-07 19:47:33.113673] [debug] - RequestHandler::deleteResource - Delete Resource = /.test.txt.swp - Chunk = -1
+[2020-12-07 19:47:33.113725] [debug] - Server::handleAccept
+[2020-12-07 19:47:33.113821] [debug] - ServerConnection::start
+[2020-12-07 19:47:33.113860] [info] - RequestHandler::deleteResource - Response = < 200 >
+[2020-12-07 19:47:33.113897] [debug] - Server::startAccept
+[2020-12-07 19:47:33.114122] [debug] - ServerConnection::handleWrite
+[2020-12-07 19:47:33.114127] [debug] - ServerConnection::handleRead
+[2020-12-07 19:47:33.115109] [info] - RequestHandler::handleRequest - Request = {"uri":"\/transfer\/file","body":"{\"content\":\"dGVzdDIK\",\"path\":\"\\\/home\\\/gaetano\\\/CLionProjects\\\/remote-backup\\\/inputDirectory\\\/test.txt\",\"fileName\":\"test.txt\",\"relativePath\":\"\\\/test.txt\",\"chunkNumber\":\"1\",\"isFile\":\"true\",\"fileSize\":\"6\",\"fileHash\":\"126a8a51b9d1bbd07fddc65819a542c3\"}\n","headers":"[{\"name\":\"username\",\"value\":\"Gaetano\"}\n\r\n{\"name\":\"inputDirPath\",\"value\":\"_home_gaetano_CLionProjects_remote-backup_inputDirectory\"}\n\r\n]"}
+[2020-12-07 19:47:33.115167] [debug] - RequestHandler::authenticateClient
+[2020-12-07 19:47:33.115234] [info] - RequestHandler::authenticateClient - Found Client and Path
+[2020-12-07 19:47:33.115542] [debug] - RequestHandler::transferFile - File = /test.txt - Chunk = 1
+[2020-12-07 19:47:33.115867] [info] - RequestHandler::transferFile - Response = < 200 >
+[2020-12-07 19:47:33.116071] [debug] - ServerConnection::handleWrite
+[2020-12-07 19:48:04.438264] [info] - Server::handleStop - Server stopped

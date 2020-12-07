@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 02/11/20.
-//
-
 #include "ServerConnection.h"
 #include <boost/bind.hpp>
 #include <iostream>

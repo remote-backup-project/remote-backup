@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 07/11/20.
-//
-
 #include "Client.h"
 #include <ostream>
 #include <string>
@@ -50,7 +46,8 @@ void Client::sendHashFile(const std::string& filePath)
     LOG.debug("Client::sendHashFile - filePath = " + filePath);
     try{
         std::string md5FileTuple = StringUtils::md5FromFile(filePath);
-        FileChunk fileChunk(0, md5FileTuple, filePath, StringUtils::getStringDifference(filePath, fileConfig.getInputDirPath()));
+        std::uintmax_t fileSize = fs::file_size(fs::path(filePath));
+        FileChunk fileChunk(0, md5FileTuple, "", filePath, StringUtils::getStringDifference(filePath, fileConfig.getInputDirPath()), fileSize);
         sendRequest(this, Services::CHECKSUM_FILE, fileChunk.to_string(), sendContentFile);
     }
     catch(std::exception& exception){
@@ -99,13 +96,16 @@ void Client::sendContentFile(void* client, std::string filePath)
         }
 
         std::vector<char> data(Socket::CHUNK_SIZE + 1, 0);
+        std::uintmax_t fileSize = fs::file_size(fs::path(filePath));
+        std::string md5FileTuple = StringUtils::md5FromFile(filePath);
+
         long chunk = 1;
         while (ifs)
         {
             ifs.read(data.data(), Socket::CHUNK_SIZE);
             std::streamsize s = ifs.gcount();
             data[s] = 0;
-            FileChunk fileChunk(chunk++, std::string(data.data(), s), filePath, StringUtils::getStringDifference(filePath, fileConfig.getInputDirPath()));
+            FileChunk fileChunk(chunk++, md5FileTuple, std::string(data.data(), s), filePath, StringUtils::getStringDifference(filePath, fileConfig.getInputDirPath()), fileSize);
             sendRequest(client, Services::TRANSFER_FILE, fileChunk.to_string(), [](void*, std::string){});
         }
 

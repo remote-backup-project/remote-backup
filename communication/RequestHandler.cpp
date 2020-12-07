@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 02/11/20.
-//
-
 #include "RequestHandler.h"
 #include "../models/FileChunk.h"
 #include "../utils/Logger.h"
@@ -60,9 +56,14 @@ void RequestHandler::transferDirectory(Request& request, Response& response)
         try
         {
             fs::path path(outputDirPath + fileChunk.getRelativePath());
+            fs::path cachePath(outputDirPath + "/.cache" + fileChunk.getRelativePath());
 
-            if (!fs::exists(path))
+            if (!fs::exists(path)) {
                 fs::create_directory(path);
+            }
+            if (!fs::exists(cachePath)) {
+                fs::create_directory(cachePath);
+            }
 
             response = Response::stockResponse(StockResponse::ok);
             LOG.info("RequestHandler::transferDirectory - Response = < " + std::to_string(response.status) + " >");
@@ -91,7 +92,7 @@ void RequestHandler::transferFile(Request &request, Response &response)
 
         try
         {
-            fileWriter.write(outputDirPath + fileChunk.getRelativePath(), fileChunk);
+            fileWriter.write(outputDirPath, fileChunk);
 
             response = Response::stockResponse(StockResponse::ok);
             LOG.info("RequestHandler::transferFile - Response = < " + std::to_string(response.status) + " >");
@@ -147,7 +148,8 @@ bool RequestHandler::authenticateClient(Request& request, Response& response){
         {
             /* credentials not present */
             LOG.debug("RequestHandler::authenticateClient - Client NOT found -> creation of client folder");
-            fs::create_directory(outputDirPath);
+            fs::create_directory(outputDirPath); //creo la cartella per l'utente
+            fs::create_directory(outputDirPath + "/.cache"); //creo la relativa cartella di cache
         }
         return true;
     }
@@ -183,7 +185,7 @@ void RequestHandler::checksumFile(Request& request, Response& response)
         {
             std::string md5File = fs::exists(outputDirPath + fileChunk.getRelativePath()) ?
                     StringUtils::md5FromFile(outputDirPath + fileChunk.getRelativePath()) : "";
-            if(boost::equals(md5File, fileChunk.getContent()))
+            if(boost::equals(md5File, fileChunk.getFileHash()))
             {
                 response = Response::stockResponse(StockResponse::ok);
                 LOG.info("RequestHandler::checksumFile - Response = < " + std::to_string(response.status) + " - File < " + fileChunk.getRelativePath() + " > already exists >");
@@ -191,8 +193,6 @@ void RequestHandler::checksumFile(Request& request, Response& response)
             else
             {
                 response = Response::stockResponse(StockResponse::continue_);
-                if(!md5File.empty())
-                    fs::remove(outputDirPath + fileChunk.getRelativePath());
                 LOG.trace("RequestHandler::checksumFile - Response = < " + std::to_string(response.status) + " - File < " + fileChunk.getRelativePath() + " > doesn't exists or has changed >");
             }
         }

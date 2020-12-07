@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 07/11/20.
-//
-
 #include "FileChunk.h"
 #include "../converters/Serializer.h"
 #include "../utils/StringUtils.h"
@@ -22,10 +18,11 @@ FileChunk::FileChunk(std::string path, std::string relativePath):
         isFile(false)
 {}
 
-FileChunk::FileChunk(std::string content, std::string path, std::string relativePath):
+FileChunk::FileChunk(std::string content, std::string path, std::string relativePath, std::uintmax_t fileSize):
     content(std::move(content)),
     path(std::move(path)),
     relativePath(std::move(relativePath)),
+    fileSize(fileSize),
     isFile(true)
 {
     std::vector<std::string> results = StringUtils::split(this->path, "/");
@@ -33,11 +30,14 @@ FileChunk::FileChunk(std::string content, std::string path, std::string relative
         fileName = results[results.size()-1];
 }
 
-FileChunk::FileChunk(long chunkNumber, std::string content, std::string path, std::string relativePath):
+FileChunk::FileChunk(long chunkNumber, std::string fileHash, std::string content, std::string path, std::string relativePath,
+                     std::uintmax_t fileSize):
     chunkNumber(chunkNumber),
+    fileHash(fileHash),
     content(std::move(content)),
     path(std::move(path)),
     relativePath(std::move(relativePath)),
+    fileSize(fileSize),
     isFile(true)
 {
     std::vector<std::string> results = StringUtils::split(this->path, "/");
@@ -61,6 +61,8 @@ void FileChunk::writeAsString(boost::property_tree::ptree& pt){
     pt.put("relativePath", this->relativePath);
     pt.put("chunkNumber", this->chunkNumber);
     pt.put("isFile", this->isFile);
+    pt.put("fileSize", this->fileSize);
+    pt.put("fileHash", this->fileHash);
 }
 
 void FileChunk::readAsString(boost::property_tree::ptree& pt){
@@ -70,6 +72,8 @@ void FileChunk::readAsString(boost::property_tree::ptree& pt){
     this->relativePath = pt.get<std::string>("relativePath");
     this->chunkNumber = pt.get<long>("chunkNumber");
     this->isFile = pt.get<bool>("isFile");
+    this->fileSize = pt.get<std::uintmax_t>("fileSize");
+    this->fileHash = pt.get<std::string>("fileHash");
 }
 
 std::string FileChunk::getContent(){ return content; }
@@ -79,6 +83,10 @@ std::string FileChunk::getPath(){ return path; }
 std::string FileChunk::getFilename() { return fileName; }
 
 std::string FileChunk::getRelativePath() { return relativePath; }
+
+std::uintmax_t FileChunk::getFileSize() { return fileSize; }
+
+std::string FileChunk::getFileHash() { return fileHash; }
 
 long FileChunk::getChunkNumber(){ return chunkNumber; }
 

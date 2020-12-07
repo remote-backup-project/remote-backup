@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 21/10/20.
-//
-
 #ifndef REMOTE_BACKUP_DESERIALIZER_H
 #define REMOTE_BACKUP_DESERIALIZER_H
 

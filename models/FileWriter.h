@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 16/11/20.
-//
-
 #ifndef REMOTE_BACKUP_FILEWRITER_H
 #define REMOTE_BACKUP_FILEWRITER_H
 

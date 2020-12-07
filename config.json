@@ -2,6 +2,6 @@
   "inputDirPath" : "/home/gaetano/CLionProjects/remote-backup/inputDirectory",
   "outputDirPath" : "/home/gaetano/CLionProjects/remote-backup/outputDirectory",
   "username" : "Gaetano",
-  "hostname" : "Lenovo-G50-80",
+  "hostname" : "gaetano-Lenovo-G50-80",
   "port": "9563"
 }

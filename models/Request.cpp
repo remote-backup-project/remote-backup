@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 07/11/20.
-//
-
 #include "Request.h"
 #include <utility>
 #include "../converters/Serializer.h"

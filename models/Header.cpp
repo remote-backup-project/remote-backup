@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 08/11/20.
-//
-
 #include "Header.h"
 
 Header::Header(){}

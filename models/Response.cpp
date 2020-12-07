@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 02/11/20.
-//
-
 #include "Response.h"
 
 Response Response::stockResponse(StockResponse::StatusType status)

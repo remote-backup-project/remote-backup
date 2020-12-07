@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 22/10/20.
-//
-
 #ifndef REMOTE_BACKUP_STRINGUTILS_H
 #define REMOTE_BACKUP_STRINGUTILS_H
 

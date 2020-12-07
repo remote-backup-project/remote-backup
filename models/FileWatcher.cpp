@@ -1,7 +1,3 @@
-//
-// Created by gaetano on 15/11/20.
-//
-
 #include "FileWatcher.h"
 #include <filesystem>
 #include <string>

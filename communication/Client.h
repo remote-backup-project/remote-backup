@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 07/11/20.
-//
-
 #ifndef REMOTE_BACKUP_CLIENT_H
 #define REMOTE_BACKUP_CLIENT_H
 

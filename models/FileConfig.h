@@ -1,7 +1,3 @@
-//
-// Created by gaetano on 02/11/20.
-//
-
 #ifndef REMOTE_BACKUP_FILECONFIG_H
 #define REMOTE_BACKUP_FILECONFIG_H
 

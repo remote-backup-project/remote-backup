@@ -1,7 +1,3 @@
-//
-// Created by gaetano on 15/11/20.
-//
-
 #ifndef REMOTE_BACKUP_FILEWATCHER_H
 #define REMOTE_BACKUP_FILEWATCHER_H
 

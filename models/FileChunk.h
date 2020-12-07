@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 22/10/20.
-//
-
 #ifndef REMOTE_BACKUP_FILECHUNK_H
 #define REMOTE_BACKUP_FILECHUNK_H
 
@@ -17,20 +13,25 @@ class FileChunk : public Serializable{
     std::string path;
     std::string fileName;
     std::string relativePath;
+    std::uintmax_t fileSize;
+    std::string fileHash;
     bool isFile;
 
 public:
     FileChunk();
     FileChunk(std::string relativePath);
     FileChunk(std::string path, std::string relativePath);
-    FileChunk(std::string content, std::string path, std::string relativePath);
-    FileChunk(long chunkNumber, std::string content, std::string path, std::string relativePath);
+    FileChunk(std::string content, std::string path, std::string relativePath, std::uintmax_t fileSize);
+    FileChunk(long chunkNumber, std::string fileHash, std::string content, std::string path, std::string relativePath, std::uintmax_t fileSize);
 
     std::string getContent();
     std::string getPath();
     std::string getFilename();
     std::string getRelativePath();
     long getChunkNumber();
+    std::uintmax_t getFileSize();
+    std::string getFileHash();
+
 
     void setContent(std::string content);
 

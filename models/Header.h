@@ -1,7 +1,3 @@
-//
-// Created by alessandro on 02/11/20.
-//
-
 #ifndef REMOTE_BACKUP_HEADER_H
 #define REMOTE_BACKUP_HEADER_H
 
