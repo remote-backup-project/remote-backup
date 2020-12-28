@@ -217,10 +217,12 @@ void RequestHandler::deleteResource(Request& request, Response& response){
     try
     {
         fs::path path(outputDirPath + fileChunk.getRelativePath());
+        fs::path cachePath(outputDirPath + "/.cache" + fileChunk.getRelativePath());
 
         if (fs::exists(path) && fs::is_directory(path))
         {
             fs::remove_all(path); //rimozione ricorsiva della cartella e del suo contenuto
+            fs::remove_all(cachePath);
             response = Response::stockResponse(StockResponse::ok);
             LOG.info("RequestHandler::deleteResource - Response = < " + std::to_string(response.status) + " >");
         }

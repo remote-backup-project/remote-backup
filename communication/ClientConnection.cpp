@@ -66,7 +66,7 @@ void ClientConnection::handleResolve(const boost::system::error_code& err)
     }
     else
     {
-        LOG.warning("ClientConnection::handleResolve - < message : " + err.message() + " > - Retrying in 5 seconds");
+        LOG.warning("ClientConnection::handleResolve - < message : " + err.message() + " > - Retrying in 1 seconds");
         restart();
     }
 }
@@ -87,7 +87,7 @@ void ClientConnection::handleConnect(const boost::system::error_code& err)
     }
     else
     {
-        LOG.warning("ClientConnection::handleConnect - < message : " + err.message() + " > - Retrying in 5 seconds");
+        LOG.warning("ClientConnection::handleConnect - < message : " + err.message() + " > - Retrying in 1 seconds");
         restart();
     }
 }
@@ -112,7 +112,7 @@ void ClientConnection::handleWrite(const boost::system::error_code& err)
     }
     else
     {
-        LOG.error("ClientConnection::handleWrite - < message :  " + err.message() + " > - Retrying in 5 seconds");
+        LOG.error("ClientConnection::handleWrite - < message :  " + err.message() + " > - Retrying in 1 second");
         restart();
     }
 }
@@ -138,7 +138,7 @@ void ClientConnection::handleRead(const boost::system::error_code& e, std::size_
         else if (!result)
         {
             LOG.warning("ClientConnection::handleRead - Cannot read Response = " + std::string(array.data(), bytes_transferred));
-            LOG.warning("ClientConnection::handleRead - Retrying in 5 seconds");
+            LOG.warning("ClientConnection::handleRead - Retrying in 1 seconds");
             restart();
         }
         else
@@ -181,7 +181,7 @@ void ClientConnection::handleResponse()
         case StockResponse::internal_server_error:
         case StockResponse::unauthorized:
             LOG.error("ClientConnection::handleResponse - Response < " + std::to_string(response.status) + " : " + response.getContent() + " >");
-            LOG.warning("ClientConnection::handleResponse - Retrying in 5 seconds");
+            LOG.warning("ClientConnection::handleResponse - Retrying in 1 seconds");
             restart();
             break;
         default:
