@@ -110,6 +110,9 @@ void Client::sendContentFile(void* client, std::string filePath)
         }
 
         ifs.close();
+
+        auto* clientPtr = reinterpret_cast<Client*>(client);
+        clientPtr->sendHashFile(filePath);
     }
     catch(std::exception& exception){
         LOG.error("Client::sendContentFile - " + std::string(exception.what()));

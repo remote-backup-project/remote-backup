@@ -18,6 +18,10 @@ void FileWriter::write(std::string basePath, FileChunk& fileChunk)
 
     std::unique_lock<std::mutex> lock(*mutexes[cachePath]);
 
+    if(boost::equals(StringUtils::md5FromFile(basePath + fileChunk.getRelativePath()), fileChunk.getFileHash())){
+        return;
+    }
+
     std::fstream ofs = fs::exists(cachePath) ?
                        std::fstream(cachePath, std::ios::in | std::ios::out | std::ios::binary | std::ios::ate):
                        std::fstream(cachePath, std::ios::out | std::ios::binary | std::ios::ate);
@@ -36,8 +40,10 @@ void FileWriter::write(std::string basePath, FileChunk& fileChunk)
 
     ofs.seekp((fileChunk.getChunkNumber() - 1) * Socket::CHUNK_SIZE);
     ofs.write(fileChunk.getContent().data(),fileChunk.getContent().size()*sizeof(char));
-    if(pos > ofs.tellp().operator long())
+    if(pos > ofs.tellp().operator long()){
         ofs.seekp(pos);
+    }
+
 
     ofs.close();
 
