@@ -22,6 +22,8 @@ private:
 
     FileWatcher fileWatcher;
 
+    std::string macAddress;
+
     void sendHashFile(const std::string& filePath);
 
     void createRemoteDirectory(const std::string& directoryPath);
@@ -35,6 +37,8 @@ private:
     static void sendRequest(void* client, std::string uri, std::string body, void (* onResponse)(void*, std::string));
 
     void watchFileSystem();
+
+    void setMacAddress();
 };
 
 #endif //REMOTE_BACKUP_CLIENT_H
