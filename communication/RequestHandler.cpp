@@ -117,7 +117,6 @@ bool RequestHandler::authenticateClient(Request& request, Response& response){
         auto headers = request.getHeaders();
         std::string username;
         std::string inputDirPath;
-        std::string macAddr;
 
         for(auto & h: headers){
             if(boost::equals(h.getName(), Config::USERNAME))
@@ -128,20 +127,17 @@ bool RequestHandler::authenticateClient(Request& request, Response& response){
             {
                 inputDirPath = h.getValue();
                 std::replace(inputDirPath.begin(), inputDirPath.end(), '/', '_');
-            }else if(boost::equals(h.getName(), Config::MAC_ADDR))
-            {
-                macAddr = h.getValue();
             }
         }
 
-        if(username.empty() || inputDirPath.empty() || macAddr.empty())
+        if(username.empty() || inputDirPath.empty())
         {
             LOG.error("RequestHandler::authenticateClient - Client unauthorized");
             response = Response::stockResponse(StockResponse::unauthorized);
             return false;
         }
 
-        outputDirPath = fileConfig.getOutputDirPath() + "/" + username + "_" + inputDirPath + "_" + macAddr;
+        outputDirPath = fileConfig.getOutputDirPath() + "/" + username + "_" + inputDirPath;
 
         if(fs::exists(outputDirPath))
         {

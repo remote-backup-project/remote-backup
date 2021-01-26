@@ -21,7 +21,6 @@ class FileConfig : Serializable{
     std::string username;
     std::string hostname;
     std::string port;
-    std::string macInterface;
 
     void createServerConfigFile();
 
@@ -40,8 +39,6 @@ public:
     std::string getHostname();
 
     std::string getPort();
-
-    std::string getMacInterface();
 
 
     void writeAsString(boost::property_tree::ptree& pt) override;
