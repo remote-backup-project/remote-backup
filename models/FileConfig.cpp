@@ -32,13 +32,15 @@ void FileConfig::createServerConfigFile(){
 
 void FileConfig::createClientConfigFile(){
     std::fstream configFile;
-    std::string username, inputDirPath, port;
+    std::string username, inputDirPath, port, macInterface;
     std::cout << "Insert username: " << std::endl;
     getline(std::cin, username);
     std::cout << "Insert path of the input directory: " << std::endl;
     getline(std::cin, inputDirPath);
     std::cout << "Insert port: " << std::endl;
     getline(std::cin, port);
+    std::cout << "Insert mac interface: " << std::endl;
+    getline(std::cin, macInterface);
     FileConfig temp(inputDirPath, "", username, "", port);
     auto res = Serializer::serialize(temp);
     configFile.open("../config.json", std::fstream::out);
@@ -53,7 +55,7 @@ std::string FileConfig::getOutputDirPath(){ return outputDirPath; }
 std::string FileConfig::getUsername() { return username; }
 std::string FileConfig::getHostname() { return hostname; }
 std::string FileConfig::getPort(){ return port; };
-
+std::string FileConfig::getMacInterface() { return macInterface; }
 
 void FileConfig::writeAsString(boost::property_tree::ptree& pt){
     pt.put("inputDirPath", this->inputDirPath);
@@ -61,6 +63,7 @@ void FileConfig::writeAsString(boost::property_tree::ptree& pt){
     pt.put("username", this->username);
     pt.put("hostname", this->hostname);
     pt.put("port", this->port);
+    pt.put("macInterface", this->macInterface);
 }
 
 void FileConfig::readAsString(boost::property_tree::ptree& pt){
@@ -69,6 +72,7 @@ void FileConfig::readAsString(boost::property_tree::ptree& pt){
     this->username = pt.get<std::string>("username");
     this->hostname = pt.get<std::string>("hostname");
     this->port = pt.get<std::string>("port");
+    this->macInterface = pt.get<std::string>("macInterface");
 }
 
 void FileConfig::readServerFile(){
@@ -110,7 +114,7 @@ void FileConfig::readClientFile(){
         tmp << configFile.rdbuf();
         auto configData = Deserializer::deserialize<FileConfig>(tmp.str());
 
-        if(configData.getInputDirPath().empty() || configData.getUsername().empty() || configData.getPort().empty()){
+        if(configData.getInputDirPath().empty() || configData.getUsername().empty() || configData.getPort().empty() || configData.getMacInterface().empty()){
             configFile.close();
             createClientConfigFile();
         }
@@ -120,6 +124,7 @@ void FileConfig::readClientFile(){
             this->username = configData.getUsername();
             this->hostname = configData.getHostname();
             this->port = configData.getPort();
+            this->macInterface = configData.getMacInterface();
             configFile.close();
         }
     }

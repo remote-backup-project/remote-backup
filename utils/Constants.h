@@ -13,6 +13,7 @@ namespace Config{
     const char OUTPUT_DIR_PATH[] = "outputDirPath";
     const char HOSTNAME[] = "hostname";
     const char PORT[] = "port";
+    const char MAC_ADDR[] = "macAddress";
 };
 
 namespace Services{

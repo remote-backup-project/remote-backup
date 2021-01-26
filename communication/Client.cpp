@@ -24,6 +24,7 @@ Client::Client():
 #endif
     signals.async_wait(boost::bind(&Client::handleStop, this));
 
+    setMacAddress();
     fileConfig.readClientFile();
 //    sendDirectory();
     watchFileSystem();
@@ -77,6 +78,8 @@ void Client::sendRequest(void *context, std::string uri, std::string body, void 
     LOG.info("Client::sendRequest - URI = < " + uri + " >");
     auto* client = reinterpret_cast<Client*>(context);
     Request request(std::move(uri), std::move(body));
+    Header header(Config::MAC_ADDR, client->macAddress);
+    request.addHeader(header);
 
     client->clientConnectionPtr.reset(new ClientConnection(client->ioContext));
     client->clientConnectionPtr->setRequest(request);
@@ -155,4 +158,31 @@ void Client::watchFileSystem()
                 break;
         }
     });
+}
+
+void Client::setMacAddress()
+{
+    int fd;
+
+    struct ifreq ifr;
+    char *iface = fileConfig.getMacInterface().data();
+    char *mac;
+
+    fd = socket(AF_INET, SOCK_DGRAM, 0);
+
+    ifr.ifr_addr.sa_family = AF_INET;
+    strncpy((char *)ifr.ifr_name , (const char *)iface , IFNAMSIZ-1);
+
+    ioctl(fd, SIOCGIFHWADDR, &ifr);
+
+    close(fd);
+
+    mac = (char *)ifr.ifr_hwaddr.sa_data;
+
+    //display mac address
+    char uc_Mac[32] = {0};
+    sprintf((char *)uc_Mac,(const char *)"%.2x:%.2x:%.2x:%.2x:%.2x:%.2x" ,
+            mac[0] & 0xff, mac[1] & 0xff, mac[2] & 0xff, mac[3] & 0xff, mac[4] & 0xff, mac[5] & 0xff);
+
+    macAddress = std::string(uc_Mac);
 }
