@@ -2,6 +2,7 @@
 #include "../converters/Serializer.h"
 #include "../utils/StringUtils.h"
 #include <iostream>
+#include <utility>
 
 FileChunk::FileChunk() {}
 
@@ -33,11 +34,11 @@ FileChunk::FileChunk(std::string content, std::string path, std::string relative
 FileChunk::FileChunk(long chunkNumber, std::string fileHash, std::string content, std::string path, std::string relativePath,
                      std::uintmax_t fileSize):
     chunkNumber(chunkNumber),
-    fileHash(fileHash),
     content(std::move(content)),
     path(std::move(path)),
     relativePath(std::move(relativePath)),
     fileSize(fileSize),
+    fileHash(std::move(fileHash)),
     isFile(true)
 {
     std::vector<std::string> results = StringUtils::split(this->path, "/");
