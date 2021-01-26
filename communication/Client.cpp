@@ -24,8 +24,8 @@ Client::Client():
 #endif
     signals.async_wait(boost::bind(&Client::handleStop, this));
 
-    setMacAddress();
     fileConfig.readClientFile();
+    setMacAddress();
 //    sendDirectory();
     watchFileSystem();
 }
@@ -165,13 +165,12 @@ void Client::setMacAddress()
     int fd;
 
     struct ifreq ifr;
-    char *iface = fileConfig.getMacInterface().data();
     char *mac;
 
     fd = socket(AF_INET, SOCK_DGRAM, 0);
 
     ifr.ifr_addr.sa_family = AF_INET;
-    strncpy((char *)ifr.ifr_name , (const char *)iface , IFNAMSIZ-1);
+    strncpy((char *)ifr.ifr_name , (const char *)fileConfig.getMacInterface().data() , IFNAMSIZ-1);
 
     ioctl(fd, SIOCGIFHWADDR, &ifr);
 
