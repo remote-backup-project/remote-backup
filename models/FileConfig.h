@@ -30,6 +30,7 @@ class FileConfig : Serializable{
 public:
     FileConfig();
     FileConfig(std::string inputDirPath, std::string outputDirPath, std::string username, std::string hostname, std::string port);
+    FileConfig(std::string inputDirPath, std::string outputDirPath, std::string username, std::string hostname, std::string port, std::string macInterface);
 
     std::string getInputDirPath();
 

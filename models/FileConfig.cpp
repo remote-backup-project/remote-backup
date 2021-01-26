@@ -9,6 +9,14 @@ FileConfig::FileConfig(std::string inputDirPath, std::string outputDirPath, std:
         hostname(std::move(hostname)),
         port(std::move(port)){};
 
+FileConfig::FileConfig(std::string inputDirPath, std::string outputDirPath, std::string username, std::string hostname, std::string port, std::string macInterface):
+        inputDirPath(std::move(inputDirPath)),
+        outputDirPath(std::move(outputDirPath)),
+        username(std::move(username)),
+        hostname(std::move(hostname)),
+        port(std::move(port)),
+        macInterface(std::move(macInterface)){};
+
 void FileConfig::createServerConfigFile(){
     std::fstream configFile;
     std::string hostname, outputDirPath, port;
@@ -41,7 +49,7 @@ void FileConfig::createClientConfigFile(){
     getline(std::cin, port);
     std::cout << "Insert mac interface: " << std::endl;
     getline(std::cin, macInterface);
-    FileConfig temp(inputDirPath, "", username, "", port);
+    FileConfig temp(inputDirPath, "", username, "", port, macInterface);
     auto res = Serializer::serialize(temp);
     configFile.open("../config.json", std::fstream::out);
     configFile << res.data();
